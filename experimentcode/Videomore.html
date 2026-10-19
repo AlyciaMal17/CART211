@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Beach Video</title>
+
+    <style>
+      body {
+        font-family:
+          "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+          "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+        margin: 20px;
+      }
+      /* Video size buttons*/
+      .size-controls {
+        margin-botton: 15px;
+      }
+
+      /* Style all buttons inside the controls section*/
+      .size-controls button {
+        padding: 8px 14px; /*Adds space inside each button*/
+        margin: 3px; /*adds space between buttons*/
+        cursor: pointer; /*changes the mouse pointer to a hand*/
+      }
+
+      /*---------
+General Video Player Styles
+----------*/
+
+      /*Applies these styles to the video player*/
+      video {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        aspect-ratio: 16 / 9;
+        height: auto;
+        background-color: black;
+        transition: width 0.3 ease;
+        /* makes change in the view appear smoothly*/
+      }
+
+      /*---------
+DIfferent Video Sizes
+----------*/
+
+      /*Small video: 320 px video*/
+      video.small {
+        width: 320px;
+      }
+      video.medium {
+        width: 480px;
+      }
+      video.large {
+        width: 720px;
+      }
+      video.full {
+        width: 100px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- -->
+    <h1>Beach Video</h1>
+    <p>watch the video</p>
+
+    <!-- Group the buttons together -->
+    <div class="size-controls">
+      <!-- Tells visitors what the button controls -->
+      <strong>Video Size:</strong>
+
+      <!-- When clicked, calls the JS function and changes the video width to 320px -->
+      <button onclick="changeSize('small')">small</button>
+
+      <!-- When clicked, calls the JS function and changes the video width to 4800px -->
+      <button onclick="changeSize('medium')">medium</button>
+
+      <!-- When clicked, calls the JS function and changes the video width to 720px -->
+      <button onclick="changeSize('large')">large</button>
+
+      <!-- When clicked, calls the JS function and changes the video width to available content width -->
+      <button onclick="changeSize('full')">full width</button>
+    </div>
+    <!--  ---------
+   Video Player 
+---------- -->
+
+    <!-- id="myVideo" gives the video a unique name that JS can use to find it.
+ class="full" makes the video start at full width 
+ controls displays the built-in play, pause, volume and other conrols.-->
+
+    <video id="myVideo" class="full" controls>
+      <source src="VideoBeach.mp4" type="video/mp4" />
+      Sorry, your browser cannot play this video.
+    </video>
+
+    <!-- Javascript: Change Video Size -->
+    <script>
+      //This function runs whenever a size button is clicked.
+      //the word "size" recives the value from the button
+      // such as "small", "medium", "large","full".
+        function changeSize(size) {
+            //finds the video element using its unique ID
+            const video = document.getElementById("myVideo");
+            //remove all four possible size classes.
+            // this prevents the old size settings from remaining active.
+            video.classList.remove("small", "medium", "large", "full");
+
+            // Adds the new size class selected by the visitor.
+            // The CCS then applies the matching width
+            video.classList.add(size);
+        }
+    </script>
+  </body>
+</html>
