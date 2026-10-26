@@ -1,0 +1,317 @@
+/* Genaral Page Styles*/
+
+body {
+  font-family: Roboto, sans-serif;
+  /*Makes the text very BOLD*/
+  font-weight: 900;
+  /*Use the  default font size as the refrence size*/
+  font-size: 1em;
+  padding: 0;
+  margin: 0;
+}
+
+.menu1 {
+  display: flex;
+  background: white;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.menu1 a {
+  display: block;
+}
+
+/*MAIN CONTENT AND HEADING*/
+
+#wrapper {
+  width: 90%;
+  margin: 0% auto;
+}
+
+h1 {
+  text-align: left;
+  /*Make the heading 4x the base font size*/
+  font-size: 4em;
+  /*add space below heading*/
+  margin-bottom: 1em;
+}
+
+h2 {
+  margin-top: 0px;
+  margin-bottom: 30px;
+  text-align: right;
+  font-size: 20px;
+  color: darkgray;
+}
+
+.intro {
+  font-size: 2em;
+  margin-bottom: 1em;
+  text-align: justify;
+}
+
+/*NAVIGRATION BAR*/
+nav {
+  display: grid;
+  /*First Column: 60% of the grid width. 
+    Second Column; the remaining available space*/
+  grid-template-columns: 60% 1fr;
+
+  align-items: center;
+  font-size: 2em;
+  margin-top: 50px;
+}
+
+.logo {
+  text-align: left;
+}
+
+nav a {
+  text-decoration: none;
+  color: black;
+  font-weight: bold;
+}
+
+nav a:hover {
+  color: darkgray;
+}
+
+.menu1 {
+  text-align: right;
+}
+
+.menu1_active {
+  text-align: right;
+  color: gray;
+}
+
+/*SECTIONS AND ARTICLES*/
+
+section {
+  margin-bottom: 30px;
+  text-align: justify;
+}
+
+/*Add extra psace below the final paragraph*/
+article p:last-child {
+  margin-bottom: 80px;
+}
+
+article h3 {
+  margin-bottom: 10px;
+  color: darkgray;
+}
+
+/*FOOTER*/
+footer {
+  margin-top: 20px;
+  min-height: 30px;
+  font-size: 10px;
+  font-weight: lighter;
+  font-style: italic;
+}
+
+footer a {
+  text-decoration: none;
+  color: black;
+}
+
+/*DESKTOP IMAGE GRID*/
+.pict {
+  display: grid;
+  /*Create 12 equally sized columns*/
+  grid-template-columns: repeat(12, 1fr);
+  gap: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.im {
+  width: 100%;
+  height: auto;
+  /*Request a square image area*/
+  aspect-ratio: 1 / 1;
+  /*Fill he area without stretching the image - the image may be cropped to fit*/
+  object-fit: cover;
+  box-sizing: border-box;
+  display: block;
+}
+
+/*FIRST AND SECOND ROWS*/
+
+/*Image 1: upper left position*/
+.im1 {
+  /*Span 3 colums*/
+  grid-column: 1 / 4;
+  /*Span 2 colums*/
+  grid-row: 1 / 3;
+}
+
+/*Image 2: beside the image 1*/
+.im2 {
+  /*Span the next 3 colums*/
+  grid-column: 4 / 7;
+  /*Span the same 2 rows*/
+  grid-row: 1 / 3;
+}
+
+/*Image 3: large rectangle on the right*/
+.im3 {
+  /*Span the next 6 colums*/
+  grid-column: 7 / 13;
+  /*Span 4 rows*/
+  grid-row: 1 / 5;
+}
+
+/*Image 4: below image 1*/
+.im4 {
+  /*Use the same 3 colums as image 1*/
+  grid-column: 1 / 4;
+  /*Span rows 3 and 4 */
+  grid-row: 3 / 5;
+}
+
+/*Image 5: below image 1*/
+.im5 {
+  /*Use the same 3 colums as image 2*/
+  grid-column: 4 / 7;
+  /*Span rows 3 and 4 */
+  grid-row: 3 / 5;
+}
+/*THIRD AND FOURTH ROWS*/
+
+/*Large rectangle on the left*/
+.im6 {
+  /*span 6 columns*/
+  grid-column: 1 / 7;
+  /*Span 4 rows*/
+  grid-row: 5 / 9;
+}
+
+/*Image7: upper image on the right*/
+.im7 {
+  /*span 3 columns*/
+  grid-column: 7 / 10;
+  /*Span 4 rows*/
+  grid-row: 5 / 7;
+}
+
+/*Image8: beside image 7 */
+.im8 {
+  /*span 3 columns*/
+  grid-column: 10 / 13;
+  /*align image 7*/
+  grid-row: 5 / 7;
+}
+
+/*Image9: Below image 7*/
+.im9 {
+  /*use the same colums as image 7*/
+  grid-column: 7 / 10;
+  /*Span row 7 and 9*/
+  grid-row: 7 / 9;
+}
+
+/*Image10: Below image 8*/
+.im10 {
+  /*use the same colums as image 8*/
+  grid-column: 10 / 13;
+  /*Span row 7 and 8 */
+  grid-row: 7 / 9;
+
+  /*FINAL ROW: IMAGES 11 TO 14*/
+  /*Apply shared positioning to images 11 and 13*/
+  .im11,
+  .im13 {
+    /*initionally assigning the first 3 colums*/
+    grid-column: 1 / 4;
+    /*span the final 2 rows*/
+    grid-row: 9 / 11;
+  }
+}
+
+.im12,
+.im14 {
+  /*Apply shared positioning to images 12 and 14*/
+  /*initionally assigning the colums 4 through 6*/
+  grid-column: 4 / 7;
+  /*span the final 2 rows*/
+  grid-row: 9 / 11;
+}
+
+/*Override the starting position for image 13*/
+.im13 {
+  /*Place image 13 in columns 7 through 9*/
+  grid-column: 7 / 10;
+}
+
+/*Override the starting position for image 14*/
+.im14 {
+  /*Place image 14 in columns 10 through 12*/
+  grid-column: 10 / 13;
+}
+
+/*END OF THE DESKTOP IMAGE*/
+
+/*SOCIAL MEDIA LINKS*/
+.social a {
+  color: gray;
+  font-size: 30px;
+}
+
+.social a:hover {
+  color: lightgray;
+  font-size: 30px;
+}
+
+.social p {
+  margin-top: 10px;
+  margin-bottom: 30px;
+  color: gray;
+  text-align: center;
+  /*Use 8-% of the inherited font size*/
+  font-size: 0.8em;
+}
+
+/*SOCIAL ICON CONTAINER*/
+.social {
+  display: flex;
+  /*Stack the children vertically*/
+  flex-direction: column;
+  /*Center the children horizontally*/
+  align-items: center;
+  text-align: center;
+  /*Add 20px of verticle paddin and no horizontal*/
+  padding: 20px;
+  color: gray;
+}
+
+.social .fa {
+  font-size: 3em;
+  padding: 8px;
+  color: gray;
+}
+
+/*ICON ROW AND HOVER EFFECT*/
+.icons-wrapper {
+  /*arrage icons in a row*/
+  display: flex;
+  justify-content: center;
+  /*allows icons to move to another line when needed*/
+  flex-wrap: wrap;
+  gap: 100px;
+}
+
+.fa {
+  font-size: 6em;
+}
+
+.fa:hover {
+  color: lightgray;
+}
+
+.credits {
+  margin-top: 10px;
+  font-size: 1em;
+  width: 100%;
+}
