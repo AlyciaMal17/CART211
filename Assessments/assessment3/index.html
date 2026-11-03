@@ -4,71 +4,120 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ocean Young</title>
+    <title>Ocean Vuong</title>
 
     <!-- Meta Description for SEO-->
-    <meta name="Description"
-        content="Explore the work of Ocean Vuong, award winning poet and novelist, author of 'on Earth We're Briefly Gorgeous' and 'Time Is a Mother', explore love, loss, and identity with profound beauty" />
+    <meta name="description"
+        content="Explore the work of Ocean Vuong, award winning poet and novelist, author of 'On Earth We're Briefly Gorgeous' and 'Time Is a Mother', explore love, loss, and identity with profound beauty" />
 
     <!--Open Graph for Social Sharing-->
     <meta property="og:title" content="Ocean Vuong" />
-    <meta property="og:Description"
-        content="Explore the work of Ocean Vuong, award winning poet and novelist, author of 'on Earth We're Briefly Gorgeous' and 'Time Is a Mother', explore love, loss, and identity with profound beauty" />
+    <meta property="og:description"
+        content="Explore the work of Ocean Vuong, award winning poet and novelist, author of 'On Earth We're Briefly Gorgeous' and 'Time Is a Mother', explore love, loss, and identity with profound beauty" />
 
     <!--Author and Copyright-->
-    <meta name="author" content="Your Name" />
-    <meta name="Copyright" content="Your Name, student project, 2026" />
+    <meta name="author" content="Alycia Malonga" />
+    <meta name="copyright" content="Alycia Malonga, student project, 2026" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,300&family=Figtree:wght@400;500&display=swap"
+        rel="stylesheet" />
 
     <!-- External Stylesheet-->
     <link rel="stylesheet" href="styles.css" />
-
-    <!--Font importation-->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet" />
 </head>
 
 <body>
     <!--Navigation-->
     <nav>
-        <a href="index.html">Home</a><br />
-        <a href="Bio.html">Bio</a><br />
+        <a href="index.html">Home</a>
+        <a href="Bio.html">Bio</a>
         <a href="Work.html">Work</a>
     </nav>
 
+    <header>
+        <div class="header-inner">
+            <img src="assets/Home.jpg" alt="Portrait of Ocean Vuong" />
+            <div class="header-text">
+                <h1>Ocean Vuong</h1>
+                <h2>Poet, novelist and professor</h2>
+            </div>
+        </div>
+
+        <div class="waves" aria-hidden="true">
+            <svg class="wave-back" viewBox="0 0 2400 110" preserveAspectRatio="none">
+                <path fill="#bfe6e0"
+                    d="M0 60 C200 20 400 100 600 60 S1000 20 1200 60 S1600 100 1800 60 S2200 20 2400 60 V110 H0Z" />
+            </svg>
+            <svg class="wave-front" viewBox="0 0 2400 110" preserveAspectRatio="none">
+                <path fill="#eef8f6"
+                    d="M0 80 C200 50 400 110 600 80 S1000 50 1200 80 S1600 110 1800 80 S2200 50 2400 80 V110 H0Z" />
+            </svg>
+        </div>
+    </header>
+
     <!-- Main Wrapper-->
     <div id="wrapper">
-        <header>
-            <img src="assets/Home.jpg" alt="Portrait of Ocean Vuong" />
-            <h1>Ocean Vuong</h1>
-        </header>
-
         <!--Main Content-->
         <main>
             <article>
-                <p>
+                <p class="lead">
                     <em>Ocean Vuong</em>, born in 1988 in Ho Chi Minh City (Vietnam), is
                     a Vietnamese American poet, novelist, and professor. He emigrated to
                     the United States with his family in 1990 and grew up in
                     Connecticut.
                 </p>
                 <p>
-                    This early stage of the Web was dominated by institutional and
-                    corporate websites that provided information but offered little
-                    opportunity for collaboration or participation.
+                    His first poems appeared in small literary journals before
+                    <em>Night Sky with Exit Wounds</em> (2016) brought him international
+                    recognition. His debut novel, <em>On Earth We’re Briefly Gorgeous</em>,
+                    followed in 2019, and the poetry collection <em>Time Is a Mother</em>
+                    in 2022.
                 </p>
             </article>
-        </main>
 
-        <!--Footer-->
-        <footer>
-            <small>
-                <em>This is a school project. All student and design are Copyright
-                    Alycia Malonga, Student, 2026</em>
-            </small>
-        </footer>
+            <dl class="facts">
+                <div>
+                    <dt>Born</dt>
+                    <dd>1988, Ho Chi Minh City</dd>
+                </div>
+                <div>
+                    <dt>Emigrated</dt>
+                    <dd>1990, to the United States</dd>
+                </div>
+                <div>
+                    <dt>Raised in</dt>
+                    <dd>Connecticut</dd>
+                </div>
+                <div>
+                    <dt>Teaches at</dt>
+                    <dd>UMass Amherst</dd>
+                </div>
+            </dl>
+
+            <div class="explore">
+                <a href="Bio.html">
+                    <span class="explore-title">Biography</span>
+                    <span class="explore-text">Childhood, education and the early writing years.</span>
+                </a>
+                <a href="Work.html">
+                    <span class="explore-title">Work</span>
+                    <span class="explore-text">The books, and the languages they now live in.</span>
+                </a>
+            </div>
+        </main>
     </div>
+
+    <!--Footer-->
+    <footer>
+        <small>
+            <em>This is a school project. All student and design are Copyright
+                Alycia Malonga, Student, 2026</em>
+        </small>
+    </footer>
 </body>
 
 </html>

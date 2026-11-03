@@ -4,26 +4,41 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Work</title>
+    <title>Bio</title>
     <!-- External Stylesheet-->
-    <link rel="Stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
     <!--Navigation-->
     <nav>
-        <a href="index.html">Home</a><br />
-        <a href="Bio.html">Bio</a><br />
+        <a href="index.html">Home</a>
+        <a href="Bio.html">Bio</a>
         <a href="Work.html">Work</a>
     </nav>
 
-    <div id="wrapper">
-        <header>
-            <img src="assets/Bio.jpg" />
-            <h1>Ocean Vuong</h1>
-            <h2>Biography</h2>
-        </header>
+    <header>
+        <div class="header-inner">
+            <img src="assets/Bio.jpg" alt="Portrait of Ocean Vuong" />
+            <div class="header-text">
+                <h1>Ocean Vuong</h1>
+                <h2>Biography</h2>
+            </div>
+        </div>
 
+        <div class="waves" aria-hidden="true">
+            <svg class="wave-back" viewBox="0 0 2400 110" preserveAspectRatio="none">
+                <path fill="#bfe6e0"
+                    d="M0 60 C200 20 400 100 600 60 S1000 20 1200 60 S1600 100 1800 60 S2200 20 2400 60 V110 H0Z" />
+            </svg>
+            <svg class="wave-front" viewBox="0 0 2400 110" preserveAspectRatio="none">
+                <path fill="#eef8f6"
+                    d="M0 80 C200 50 400 110 600 80 S1000 50 1200 80 S1600 110 1800 80 S2200 50 2400 80 V110 H0Z" />
+            </svg>
+        </div>
+    </header>
+
+    <div id="wrapper">
         <!--Main Content-->
         <section>
             <article>
@@ -38,6 +53,7 @@
                     earning a B.A. in English from Brooklyn College, followed by an
                     M.F.A. in creative writing at New York University.
                 </p>
+
                 <h3>Early Writing Years</h3>
                 <p>
                     His first poems appeared in small literary journals, but it was with
