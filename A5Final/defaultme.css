@@ -379,6 +379,21 @@ footer a {
   /* Remove inner spacing. */
 }
 
+.story-page h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin-bottom: 0.5em;
+}
+
+.story-page .stories_title {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  margin-bottom: 1em;
+}
+
+.story-page .left_stories img {
+  aspect-ratio: auto;
+  object-fit: contain;
+}
+
 /* Right column containing the story text. */
 .stories {
   grid-column: 7 / 13;
@@ -395,6 +410,12 @@ footer a {
 
   line-height: 1.5em;
   /* Add vertical space between lines for readability. */
+}
+
+.story-page .stories {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.6;
 }
 
 .stories p {
