@@ -1,0 +1,18 @@
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#0d0b1f;color:#EFE6D2;font:20px/1.5 'IM Fell English',Georgia,serif}
+canvas{position:fixed;top:0;left:0;z-index:0}
+body{transition:opacity .8s}body.out{opacity:0}
+.stage{position:fixed;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:9vh;text-align:center;pointer-events:none}
+.stage>*{pointer-events:auto}
+.place{font-family:'Cinzel',serif;letter-spacing:.18em;color:#C9A24B;font-size:13px;text-transform:uppercase;margin-bottom:6px}
+.speech{max-width:640px;min-height:3.4em;padding:14px 24px;background:rgba(20,18,43,.9);border:2px solid #C9A24B;box-shadow:0 0 30px rgba(201,162,75,.25);margin-bottom:18px}
+.opts{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.btn,.card{font-family:'Cinzel',serif;background:rgba(20,18,43,.9);color:#C9A24B;border:2px solid #C9A24B;cursor:pointer;transition:.2s}
+.btn{padding:8px 34px;font-size:16px}
+.card{width:210px;padding:12px;font-size:15px}
+.card small{display:block;font:italic 15px 'IM Fell English',serif;color:#EFE6D2;margin-top:4px}
+.btn:hover,.card:hover{background:#C9A24B;color:#14122B;transform:translateY(-4px) rotate(-1deg);box-shadow:0 0 24px rgba(201,162,75,.6)}
+.card:hover small{color:#14122B}
+.trail{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:2;letter-spacing:.4em;color:#C9A24B;font-size:14px}
+.memory{position:fixed;bottom:8px;left:0;right:0;text-align:center;z-index:2;font:11px sans-serif;color:#9a9ab5}
+.debug{position:fixed;top:40px;right:10px;z-index:5;background:#000d;color:#9f9;font:11px monospace;padding:8px;max-width:340px;max-height:75vh;overflow:auto;white-space:pre;display:none}

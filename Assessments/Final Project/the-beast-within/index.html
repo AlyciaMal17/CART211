@@ -1,0 +1,37 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>The Beast Within: Creature Sorting Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script></head><body>
+<div class="trail" data-step="0"></div>
+<div class="stage">
+  <div class="place">The Beast Within</div>
+  <div class="speech" id="say"></div>
+  <div class="opts" id="btns"><button class="btn" id="acc">Accept</button><button class="btn" id="rej">Reject</button></div>
+</div>
+<script src="tracker.js"></script>
+<script>
+Beast.fresh(); // new run: the timer starts here
+let talking=false,stars=[];
+function say(txt,cb){const el=document.getElementById('say');el.textContent='';let i=0;talking=true;
+  const id=setInterval(()=>{el.textContent+=txt[i++];if(i>=txt.length){clearInterval(id);talking=false;cb&&cb()}},38)}
+say('The Sorting Hat needs your permission to read your mind.');
+function leave(msg,rej){Beast.set('rejected',rej);document.getElementById('btns').style.display='none';say(msg,()=>setTimeout(()=>Beast.go('forest.html'),1200))}
+acc.onclick=()=>leave('Wise choice. Now, let us begin...',false);
+rej.onclick=()=>leave('Interesting choice... let\'s continue anyway.',true);
+function setup(){createCanvas(windowWidth,windowHeight);for(let i=0;i<140;i++)stars.push([random(width),random(height),random(1,3),random(TWO_PI)])}
+function windowResized(){resizeCanvas(windowWidth,windowHeight)}
+function draw(){
+  background(13,11,31);noStroke();
+  for(const s of stars){fill(239,230,210,120+110*sin(frameCount*.04+s[3]));circle(s[0],s[1],s[2])}
+  for(let i=0;i<7;i++){const x=width*(i+.5)/7,y=height*.15+noise(i*10,frameCount*.006)*height*.45;
+    fill(239,230,210);rect(x-5,y,10,34);fill(255,200,90,30);circle(x,y-10,40);fill(255,190,80);ellipse(x,y-10,8+random(2),16+random(4))}
+  hat(width/2,height*.36+sin(frameCount*.03)*10,min(width,height)*.3);
+}
+function hat(x,y,s){push();translate(x,y);fill(70,45,32);stroke(201,162,75);strokeWeight(2);
+  ellipse(0,0,s*1.7,s*.3);
+  beginShape();vertex(-s*.55,0);bezierVertex(-s*.4,-s*.5,-s*.15,-s*.85,s*.3,-s*1.1);bezierVertex(s*.05,-s*.75,s*.3,-s*.5,s*.55,0);endShape(CLOSE);
+  noStroke();
+  for(const dx of[-1,1]){const ex=dx*s*.14,ey=-s*.3;fill(239,230,210);ellipse(ex,ey,s*.16,s*.12);
+    const a=atan2(mouseY-(y+ey),mouseX-(x+ex));fill(20);circle(ex+cos(a)*s*.03,ey+sin(a)*s*.02,s*.05)}
+  fill(30,15,10);ellipse(0,-s*.12,s*.22,talking?abs(sin(frameCount*.4))*s*.07+3:3);pop()}
+</script></body></html>
