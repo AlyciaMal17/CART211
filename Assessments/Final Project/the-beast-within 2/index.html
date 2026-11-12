@@ -1,0 +1,92 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>The Beast Within: Creature Sorting Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script></head><body>
+<div class="trail" data-step="0"></div>
+<div class="stage">
+  <div class="place">The Beast Within</div>
+  <div class="speech" id="say"></div>
+  <div class="opts" id="btns"><button class="btn" id="acc">Accept</button><button class="btn" id="rej">Reject</button></div>
+</div>
+<script src="tracker.js"></script>
+<script>
+Beast.fresh(); // new run: the timer starts here
+let talking=false,stars=[],candles=[],dust=[],bg;
+function say(txt,cb){const el=document.getElementById('say');el.textContent='';let i=0;talking=true;
+  const id=setInterval(()=>{el.textContent+=txt[i++];if(i>=txt.length){clearInterval(id);talking=false;cb&&cb()}},38)}
+say('The Sorting Hat needs your permission to read your mind.');
+function leave(msg,rej){Beast.set('rejected',rej);document.getElementById('btns').style.display='none';say(msg,()=>setTimeout(()=>Beast.go('forest.html'),1200))}
+acc.onclick=()=>leave('Wise choice. Now, let us begin...',false);
+rej.onclick=()=>leave('Interesting choice... let\'s continue anyway.',true);
+
+function setup(){createCanvas(windowWidth,windowHeight);
+  for(let i=0;i<160;i++)stars.push([random(width),random(height*.4),random(1,2.6),random(TWO_PI)]);
+  for(let i=0;i<26;i++)candles.push({x:random(width),y:random(height*.06,height*.5),p:random(100),s:random(.7,1.2)});
+  for(let i=0;i<50;i++)dust.push({x:random(-1,1),y:random(),v:random(.0003,.001),r:random(1,2.5)});
+  makeBg()}
+function windowResized(){resizeCanvas(windowWidth,windowHeight);makeBg()}
+
+// ---------- static Great Hall background ----------
+function makeBg(){
+  const w=width,h=height,g=createGraphics(w,h);randomSeed(7);
+  for(let y=0;y<h*.4;y++){const t=y/(h*.4);g.stroke(lerp(5,28,t),lerp(8,26,t),lerp(24,58,t));g.line(0,y,w,y)}   // enchanted ceiling
+  g.noStroke();g.fill(64,60,68);g.rect(0,h*.4,w,h*.4);                                                       // stone wall
+  for(let r=0,y=h*.4;y<h*.8;y+=26,r++)for(let x=-(r%2)*30;x<w;x+=60){g.fill(random(50,82),random(48,78),random(54,86),160);g.rect(x+1,y+1,58,24)}
+  for(let i=0;i<5;i++){const cx=w*(i+.5)/5,ww=w*.1,y0=h*.46,y1=h*.76;                                      // tall arched windows
+    g.fill(40,62,105);g.rect(cx-ww/2,y0+ww/2,ww,y1-y0-ww/2);g.arc(cx,y0+ww/2,ww,ww,PI,TWO_PI);
+    g.noFill();g.stroke(26,24,30);g.strokeWeight(7);g.rect(cx-ww/2,y0+ww/2,ww,y1-y0-ww/2);g.arc(cx,y0+ww/2,ww,ww,PI,TWO_PI);
+    g.strokeWeight(3);g.line(cx,y0,cx,y1);g.line(cx-ww/2,y0+ww*.9,cx+ww/2,y0+ww*.9);g.line(cx-ww/2,y0+ww*1.5,cx+ww/2,y0+ww*1.5);g.noStroke()}
+  const cols=[[[180,30,40],[225,185,60]],[[30,100,50],[190,195,205]],[[30,60,150],[185,125,60]],[[225,195,50],[30,30,30]]];
+  for(let i=1;i<=4;i++){const x=w*i/5;g.fill(88,84,92);g.rect(x-w*.015,h*.4,w*.03,h*.4);g.fill(0,0,0,50);g.rect(x+w*.006,h*.4,w*.009,h*.4);   // pillars
+    const bw=w*.04,y0=h*.44,bh=h*.22,c=cols[i-1];g.fill(c[0]);g.beginShape();g.vertex(x-bw/2,y0);g.vertex(x+bw/2,y0);g.vertex(x+bw/2,y0+bh);g.vertex(x,y0+bh-bh*.1);g.vertex(x-bw/2,y0+bh);g.endShape(CLOSE);
+    g.fill(c[1]);g.rect(x-bw*.12,y0+4,bw*.24,bh*.7)}                                                          // house banners
+  g.fill(38,24,17);g.rect(0,h*.4,w,h*.035);g.fill(70,46,30);g.rect(0,h*.4,w,4);                              // wooden beam
+  g.fill(24,17,15);g.rect(0,h*.8,w,h*.2);g.fill(78,50,32);                                                  // floor + long tables
+  g.quad(w*.02,h,w*.3,h,w*.41,h*.8,w*.37,h*.8);g.quad(w*.98,h,w*.7,h,w*.59,h*.8,w*.63,h*.8);
+  bg=g}
+
+// ---------- animation ----------
+function draw(){
+  const w=width,h=height,ctx=drawingContext;
+  image(bg,0,0);noStroke();
+  for(const s of stars){fill(239,230,210,110+120*sin(frameCount*.04+s[3]));circle(s[0],s[1],s[2])}
+  const hx=w/2,hy=h*.5,s=min(w*.8,h)*.27;
+  const lg=ctx.createLinearGradient(0,0,0,hy+s*.4);lg.addColorStop(0,'rgba(255,225,150,0.22)');lg.addColorStop(1,'rgba(255,225,150,0.04)');   // spotlight
+  ctx.fillStyle=lg;ctx.beginPath();ctx.moveTo(hx-25,0);ctx.lineTo(hx+25,0);ctx.lineTo(hx+s*.9,hy+s*.4);ctx.lineTo(hx-s*.9,hy+s*.4);ctx.fill();
+  for(const c of candles){const x=c.x+sin(frameCount*.01+c.p)*8,y=c.y+noise(c.p,frameCount*.004)*30,k=c.s;
+    fill(255,190,90,14);circle(x,y-14*k,70*k);fill(255,190,90,26);circle(x,y-14*k,36*k);
+    fill(236,226,200);rect(x-3.5*k,y,7*k,26*k);fill(255,210,110);ellipse(x,y-6*k,7*k+random(1.5),14*k+random(3));fill(255,250,220);ellipse(x,y-3*k,3*k,7*k)}
+  push();translate(hx,hy);fill(80,52,32);stroke(30,18,10);strokeWeight(3);                                      // stool
+  ellipse(0,s*.2,s*1.1,s*.2);for(const lx of[-.4,0,.4]){strokeWeight(s*.06);line(lx*s,s*.25,lx*s*1.4,s*.8)}pop();
+  hat(hx,hy+sin(frameCount*.03)*3,s);
+  noStroke();for(const d of dust){d.y-=d.v;if(d.y<0)d.y=1;fill(255,235,170,90);circle(hx+d.x*s*.9*d.y,d.y*(hy+s*.4),d.r)}
+  const vg=ctx.createRadialGradient(w/2,h/2,h*.25,w/2,h/2,max(w,h)*.7);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,0.7)');
+  ctx.fillStyle=vg;ctx.fillRect(0,0,w,h)}
+
+// ---------- detailed Sorting Hat ----------
+function hat(x,y,s){
+  const ctx=drawingContext;push();translate(x,y);rotate(sin(frameCount*.02)*.02);
+  fill(52,33,22);stroke(25,14,8);strokeWeight(3);beginShape();                                               // wavy brim
+  for(let a=0;a<TWO_PI;a+=.1)vertex(cos(a)*s*.88*(1+sin(a*7)*.025),sin(a)*s*.17*(1+sin(a*5)*.1));endShape(CLOSE);
+  fill(84,56,38);beginShape();for(let a=0;a<TWO_PI;a+=.1)vertex(cos(a)*s*.8*(1+sin(a*7)*.025),sin(a)*s*.13-s*.02);endShape(CLOSE);
+  fill(88,60,40);stroke(25,14,8);strokeWeight(3);                                                            // bent cone
+  beginShape();vertex(-.6*s,0);bezierVertex(-.52*s,-.4*s,-.3*s,-.75*s,-.1*s,-.98*s);bezierVertex(.05*s,-1.15*s,.35*s,-1.15*s,.52*s,-.9*s);
+  bezierVertex(.35*s,-.98*s,.2*s,-.92*s,.15*s,-.78*s);bezierVertex(.3*s,-.5*s,.5*s,-.25*s,.62*s,0);endShape(CLOSE);
+  noFill();stroke(135,95,64,150);strokeWeight(s*.035);bezier(-.48*s,-.1*s,-.4*s,-.45*s,-.25*s,-.7*s,-.08*s,-.92*s);   // light edge
+  stroke(35,21,13,140);bezier(.52*s,-.1*s,.42*s,-.35*s,.3*s,-.5*s,.17*s,-.72*s);                            // shadow edge
+  stroke(40,24,15,150);strokeWeight(2);for(let k=1;k<=5;k++){const yy=-k*.17*s,ww=s*1.1*(1-k*.14);arc(0,yy,ww,s*.07,.1,PI-.1)}  // wrinkles
+  ctx.setLineDash([5,4]);                                                                                    // stitched patches
+  push();translate(-.3*s,-.6*s);rotate(-.25);fill(112,78,50);stroke(190,150,100);strokeWeight(1.5);rect(-s*.07,-s*.06,s*.14,s*.12);pop();
+  push();translate(.27*s,-.48*s);rotate(.3);fill(70,45,30);stroke(190,150,100);strokeWeight(1.5);rect(-s*.06,-s*.08,s*.12,s*.16);pop();
+  stroke(190,150,100,170);noFill();bezier(-.55*s,-.2*s,-.3*s,-.28*s,.2*s,-.22*s,.58*s,-.16*s);ctx.setLineDash([]);   // seam
+  for(const dx of[-1,1]){const ex=dx*s*.16,ey=-.36*s,a=atan2(mouseY-(y+ey),mouseX-(x+ex)),px=ex+cos(a)*s*.03,py=ey+sin(a)*s*.02;   // eyes
+    fill(235,225,200);stroke(40,24,16);strokeWeight(s*.01);ellipse(ex,ey,s*.17,s*.12);
+    noStroke();fill(110,70,30);circle(px,py,s*.07);fill(10);circle(px,py,s*.035);fill(255,210);circle(px-s*.01,py-s*.01,s*.012);
+    noFill();stroke(35,20,12);strokeWeight(s*.016);arc(ex,ey,s*.19,s*.15,PI*1.05,PI*1.95);
+    stroke(60,38,25,160);strokeWeight(2);arc(ex,ey+s*.03,s*.18,s*.08,.2,PI-.2);
+    const up=talking?sin(frameCount*.4)*s*.012-s*.01:0;stroke(35,20,12);strokeWeight(s*.024);line(ex+dx*s*.09,ey-s*.09+up,ex-dx*s*.08,ey-s*.125+up)}
+  stroke(40,24,16);strokeWeight(s*.014);noFill();arc(0,-.22*s,s*.07,s*.06,0,PI);line(0,-.28*s,-.01*s,-.22*s);   // nose
+  if(talking){const m=abs(sin(frameCount*.4))*s*.07;fill(38,8,8);stroke(135,95,64);strokeWeight(s*.012);ellipse(0,-.1*s,s*.3,s*.02+m)}   // mouth
+  else{stroke(35,20,12);strokeWeight(s*.018);noFill();arc(0,-.14*s,s*.3,s*.1,.15,PI-.15)}
+  pop()}
+</script></body></html>
