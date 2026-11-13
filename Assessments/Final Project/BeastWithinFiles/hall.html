@@ -1,0 +1,44 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Beast Within | The Great Hall</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script></head><body>
+<div class="trail" data-step="5"></div><div class="hint2" id="walkhint">Scroll, swipe or use the arrow keys to walk down the hall</div>
+<div class="stage"><div class="place">The Great Hall</div>
+<div class="speech"><div class="who" id="who"></div><div id="say"></div><div class="hint" id="hint">click to continue ▸</div></div>
+<div class="opts" id="opts" style="display:none"><div class="card" data-opt="crowd">With the crowd<small>Right in the noise</small></div><div class="card" data-opt="friend">With one friend<small>A quiet corner</small></div><div class="card" data-opt="alone">Alone<small>Far from everyone</small></div></div>
+<button class="btn" id="cont" style="display:none">Continue</button></div>
+<script src="tracker.js"></script><script src="story.js"></script><script src="scene.js"></script><script src="creatures.js"></script>
+<script>
+var onHover,onReady;
+let hs=null,fx=null,f0=0;
+let walk=0;const mv=d=>{walk=Math.min(1,Math.max(0,walk+d));Beast.depth(walk);if(walk>.08)document.getElementById('walkhint').classList.add('gone')};
+addEventListener('wheel',e=>mv(e.deltaY*.0008),{passive:true});let ty=null;
+addEventListener('touchstart',e=>ty=e.touches[0].clientY,{passive:true});addEventListener('touchmove',e=>{const y=e.touches[0].clientY;mv((ty-y)*.004);ty=y},{passive:true});
+addEventListener('keydown',e=>{if(e.key==='ArrowDown')mv(.05);if(e.key==='ArrowUp')mv(-.05)});
+document.querySelectorAll('.card').forEach(c=>{c.addEventListener('pointerenter',()=>{hs=c.dataset.opt;onHover&&onHover(hs)});c.addEventListener('pointerleave',()=>{hs=null;onHover&&onHover(null)})});
+const intro=[["Narrator", "The Great Hall is enormous, and its ceiling is full of stars. Hundreds of students are eating, laughing and shouting across the long tables."], ["Narrator", "You are holding a tray and need somewhere to sit. Scroll or swipe to walk down the hall, then choose a seat."], ["The Sorting Hat", "Where you sit says a lot about you. And how long you take to decide says even more."]],outcomes={"crowd": [["Narrator", "You squeeze in between a group of loud sixth years, who instantly pass you the potatoes and a conversation you have never heard of."], ["The Sorting Hat", "Warm, and sociable. Hmm. I will remember that."]], "friend": [["Narrator", "You find a quiet spot at the end of a table. One friend slides over, saving you the seat beside them."], ["The Sorting Hat", "One true friend over a hundred. Hmm. I will remember that."]], "alone": [["Narrator", "You take the empty seat in the far corner. The noise fades, and candles drift above your head, just for you."], ["The Sorting Hat", "Alone, but not lonely, I think. Hmm. I will remember that."]]};
+Story.play(intro,()=>{opts.style.display='flex';Beast.begin('hall');onReady&&onReady()});
+Beast.options('.card',{"crowd": {"hippogriff": 1, "niffler": 1}, "friend": {"bowtruckle": 2}, "alone": {"thestral": 2, "nargle": 1}},o=>{opts.style.display='none';fx=o;f0=frameCount;Story.play(outcomes[o],()=>cont.style.display='inline-block')},{});
+cont.onclick=()=>Beast.go('potions.html');
+
+
+let stars=[],cf=[];const HC=[[180,30,40],[30,100,50],[30,60,150],[225,195,50]],LN=[-1.1,-.5,.5,1.1];
+function setup(){createCanvas(windowWidth,windowHeight);randomSeed(9);for(let i=0;i<140;i++)stars.push([random(-1,2),random(-1,.4),random(1,2.4),random(TWO_PI)])}
+function windowResized(){resizeCanvas(windowWidth,windowHeight)}
+function draw(){const{w,h,ox}=Lg(),t=fx?min((frameCount-f0)/170,1):0,vx=w/2,vy=h*.4,c=drawingContext;background(8,8,24);push();translate(ox,0);
+  push();translate(vx,vy);scale(1+walk*1.6);translate(-vx,-vy);
+  const sg=c.createLinearGradient(0,-h,0,vy);sg.addColorStop(0,'#05061a');sg.addColorStop(1,'#2a2850');c.fillStyle=sg;c.fillRect(-w,-h*1.5,w*3,h*1.5+vy);
+  noStroke();for(const s of stars){fill(239,230,210,110+120*sin(frameCount*.04+s[3]));circle(s[0]*w,s[1]*h,s[2])}
+  fill(58,52,62);rect(vx-w*.5,vy-h*.1,w,h*.1);for(let i=0;i<5;i++){fill(40,62,105);rect(vx-w*.45+i*w*.2,vy-h*.09,w*.06,h*.09,w*.03,w*.03,0,0)}fill(180,140,50);rect(vx-w*.16,vy-h*.02,w*.32,h*.02);
+  fill(26,18,16);rect(-w,vy,w*3,h*2);
+  for(const L of LN){const bx=vx+L*.55*w*1.3,hw=w*.07;fill(92,60,38);quad(vx-2,vy,vx+2,vy,bx+hw,h*1.4,bx-hw,h*1.4);fill(125,86,54);quad(vx-2,vy,vx+2,vy,bx+hw*.4,h*1.4,bx-hw*.4,h*1.4)}
+  for(let u=.1;u<1.35;u+=.075)for(const L of LN)for(const sd of[-1,1]){const x=vx+L*.55*w*1.3*u/1.35*1+sd*w*.07*u,y=vy+(h*1.3-vy)*u/1.35,sc=u*h*.07,k=(floor(u*13)+LN.indexOf(L)*3+(sd>0?1:0))%4,hop=fx==='crowd'?abs(sin(frameCount*.2+u*9+L))*sc*.4:0;fig(x,y-hop,sc,HC[k])}
+  for(let i=0;i<22;i++){const x=w*(.04+i*.045)+sin(frameCount*.01+i)*10,y=h*(.05+.28*noise(i*7,frameCount*.003));glow(x,y,26,'255,190,90',.45);fill(236,226,200);rect(x-2,y,4,13);fill(255,210,110);ellipse(x,y-4,5,8+random(2))}
+  pop();pop();
+  if(fx==='crowd'&&t<.9)for(let k=0;k<3;k++)cf.push({x:random(width),y:-10,vy:random(2,5),l:200,c:random(HC),r:random(5,9)});
+  for(let i=cf.length-1;i>=0;i--){const p=cf[i];p.y+=p.vy;p.x+=sin(p.y*.05);p.l--;if(p.y>height||p.l<=0){cf.splice(i,1);continue}fill(p.c[0]+50,p.c[1]+50,p.c[2]+50);rect(p.x,p.y,p.r,p.r*.6)}
+  if(fx==='friend'){const k=min(t*2,1);fig(width*.4,height*.62,height*.14,[60,80,160]);fig(width*.48,height*.62,height*.14,[150,60,70]);glow(width*.44,height*.5,height*.5,'255,190,90',.3*k);spot(width*.44,height*.55,height*.55,.9*k)}
+  if(fx==='alone'){const k=min(t*2,1);fig(width*.12,height*.66,height*.13,[70,60,110]);glow(width*.12,height*.52,height*.3,'255,200,110',.3*k);spot(width*.12,height*.58,height*.34,.94*k)}
+  vignette(.55)}
+
+</script></body></html>

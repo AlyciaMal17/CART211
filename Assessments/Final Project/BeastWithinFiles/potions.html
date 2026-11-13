@@ -1,0 +1,45 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Beast Within | Potions Class</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script></head><body>
+<div class="trail" data-step="6"></div>
+<div class="stage"><div class="place">Potions Class</div>
+<div class="speech"><div class="who" id="who"></div><div id="say"></div><div class="hint" id="hint">click to continue ▸</div></div>
+<div class="opts" id="opts" style="display:none"><div class="card" data-opt="follow">Follow the recipe<small>Exactly as written</small></div><div class="card" data-opt="improvise">Improvise<small>Add your own twist</small></div><div class="card" data-opt="copy">Copy your neighbour<small>A quick peek</small></div><button class="btn" id="conf" style="display:none">Confirm</button></div>
+<button class="btn" id="cont" style="display:none">Continue</button></div>
+<script src="tracker.js"></script><script src="story.js"></script><script src="scene.js"></script><script src="creatures.js"></script>
+<script>
+var onHover,onReady;
+let hs=null,fx=null,f0=0;
+document.querySelectorAll('.card').forEach(c=>{c.addEventListener('pointerenter',()=>{hs=c.dataset.opt;onHover&&onHover(hs)});c.addEventListener('pointerleave',()=>{hs=null;onHover&&onHover(null)})});
+const intro=[["Narrator", "The dungeons are cold and smell of damp stone and burnt herbs. Your cauldron is already bubbling."], ["Professor", "The instructions are on the board. Do exactly as written, or suffer the consequences."], ["Narrator", "Beside you, another student is already adding ingredients. You can see their notes if you lean a little."], ["The Sorting Hat", "Choose carefully. And choose again if you like. I notice everything."]],outcomes={"follow": [["Professor", "Adequate. Surprisingly."], ["Narrator", "Your potion turns a perfect, shimmering silver. Not a single drop out of place."], ["The Sorting Hat", "Careful and obedient. Hmm. I will remember that."]], "improvise": [["Narrator", "You add a pinch of something that is not on the list. The cauldron hisses, shudders, then erupts in a cloud of purple smoke."], ["Professor", "Detention. But... interesting."], ["The Sorting Hat", "Bold, and a bit reckless. Hmm. I will remember that."]], "copy": [["Narrator", "You peek at your neighbour's notes. Your potion turns the exact same shade of green as theirs."], ["Professor", "Hm. Suspiciously identical."], ["The Sorting Hat", "Resourceful, shall we say. Hmm. I will remember that."]]};
+Story.play(intro,()=>{opts.style.display='flex';Beast.begin('potions');onReady&&onReady()});
+Beast.options('.card',{"follow": {"bowtruckle": 1, "hippogriff": 1}, "improvise": {"phoenix": 2}, "copy": {"niffler": 2}},o=>{opts.style.display='none';fx=o;f0=frameCount;Story.play(outcomes[o],()=>cont.style.display='inline-block')},{confirm:'#conf'});
+cont.onclick=()=>Beast.go('room.html');
+
+
+let bg,pc=[120,120,160],pp=[];const TC={follow:[90,170,255],improvise:[255,130,40],copy:[120,230,110]};
+function setup(){createCanvas(windowWidth,windowHeight);mk()}
+function windowResized(){resizeCanvas(windowWidth,windowHeight);mk()}
+function mk(){const{w,h}=Lg(),g=createGraphics(w,h);randomSeed(6);g.noStroke();g.fill(44,52,50);g.rect(0,0,w,h);
+  for(let y=0;y<h*.7;y+=34)for(let x=-(y/34%2)*40;x<w;x+=80){g.fill(random(40,66),random(48,72),random(46,70));g.rect(x+2,y+2,76,30,3)}
+  g.fill(30,22,18);g.rect(0,h*.68,w,h*.32);g.fill(60,44,32);g.rect(0,h*.68,w,8);
+  g.fill(28,34,32);g.rect(w*.3,h*.06,w*.4,h*.24,6);g.stroke(110,80,50);g.strokeWeight(6);g.noFill();g.rect(w*.3,h*.06,w*.4,h*.24,6);g.noStroke();
+  g.fill(235,235,225,220);g.textFont('IM Fell English');g.textAlign(LEFT,CENTER);g.textSize(max(11,w*.014));['Draught of Calm','1. Add three drops of moonwater.','2. Stir clockwise, twice.','3. Do NOT add anything else.'].forEach((t,i)=>g.text(t,w*.32,h*(.1+i*.045)));
+  for(let s=0;s<2;s++){g.fill(50,36,26);g.rect(w*.02+s*w*.82,h*.18+s*0,w*.16,h*.012);for(let i=0;i<5;i++){g.fill(random([[90,160,100],[160,70,120],[70,110,170],[200,160,70]]));g.rect(w*.03+s*w*.82+i*w*.03,h*.18-h*.07,w*.02,h*.07,5)}}
+  bg=g}
+function cauldron(x,y,r,col,a){noStroke();fill(14,13,13);arc(x,y,r*2,r*1.8,0,PI);fill(48);ellipse(x,y,r*2,r*.4);fill(col[0],col[1],col[2]);ellipse(x,y,r*1.8,r*.3);glow(x,y,r*2,col.join(','),.35);
+  for(let i=0;i<4;i++){fill(255,255,255,120);circle(x+(i-1.5)*r*.35,y+sin(frameCount*.1+i*2)*3,r*.12)}}
+function draw(){const{w,h,ox}=Lg(),t=fx?min((frameCount-f0)/170,1):0,tc=TC[fx||hs||Beast.selected()]||[120,120,160];pc=pc.map((v,i)=>lerp(v,tc[i],.06));
+  push();translate(ox,0);if(fx==='improvise'&&t<.3)translate(random(-6,6),random(-4,4));image(bg,0,0);
+  for(const tx of[w*.1,w*.9]){glow(tx,h*.35,h*.3,'255,150,50',.35+.1*noise(frameCount*.05,tx));stroke(40);strokeWeight(6);line(tx,h*.4,tx,h*.5);noStroke();for(let i=0;i<5;i++){fill(255,120+i*20,30,200);ellipse(tx+(i-2)*4,h*.37-noise(i,frameCount*.08)*20,8,26)}}
+  const nc=TC.copy;fig(w*.8,h*.62,h*.12,[60,70,120]);cauldron(w*.8,h*.66,h*.09,fx==='copy'?[120,230,110]:[110,200,120],1);
+  cauldron(w*.46,h*.64,h*.14,pc,1);fill(255,120,40,200);for(let i=0;i<5;i++)ellipse(w*.46+(i-2)*14,h*.78,10,24+noise(i,frameCount*.1)*16);
+  if(frameCount%3==0)pp.push({x:w*.46+random(-30,30),y:h*.62,vy:random(.8,1.8),r:random(10,20),a:130,c:pc.slice()});
+  if(fx==='improvise'&&t<.5)for(let k=0;k<3;k++)pp.push({x:w*.46+random(-40,40),y:h*.6,vy:random(1.5,3.5),r:random(30,60),a:200,c:[180,90,220]});
+  if(fx==='follow'&&frameCount%2==0)pp.push({x:w*.46+random(-50,50),y:h*.6,vy:random(1,2.5),r:random(3,6),a:240,c:[230,240,255]});
+  for(let i=pp.length-1;i>=0;i--){const p=pp[i];p.y-=p.vy;p.r+=.3;p.a-=2.2;if(p.a<=0){pp.splice(i,1);continue}fill(p.c[0],p.c[1],p.c[2],p.a);circle(p.x+sin(p.y*.04)*8,p.y,p.r)}
+  if(fx==='copy'){const ex=w*.46+sin(frameCount*.05)*20;for(const d of[-1,1]){fill(255);circle(w*.58+d*16,h*.32,22);fill(0);circle(w*.58+d*16+8,h*.32,10)}stroke(255,230,120,150);strokeWeight(2);line(w*.8,h*.5,w*.54,h*.34);noStroke()}
+  pop();vignette(.6)}
+
+</script></body></html>

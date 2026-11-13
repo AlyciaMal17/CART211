@@ -1,0 +1,44 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Beast Within | The Quidditch Pitch</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script></head><body>
+<div class="trail" data-step="4"></div>
+<div class="stage"><div class="place">The Quidditch Pitch</div>
+<div class="speech"><div class="who" id="who"></div><div id="say"></div><div class="hint" id="hint">click to continue ▸</div></div>
+<div class="opts" id="opts" style="display:none"><div class="card" data-opt="seeker">Seeker<small>Chase the Snitch</small></div><div class="card" data-opt="beater">Beater<small>Hit things. Hard.</small></div><div class="card" data-opt="keeper">Keeper<small>Guard the hoops</small></div><div class="card" data-opt="spectator">Spectator<small>Cheer from the stands</small></div></div>
+<button class="btn" id="cont" style="display:none">Continue</button></div>
+<script src="tracker.js"></script><script src="story.js"></script><script src="scene.js"></script><script src="creatures.js"></script>
+<script>
+var onHover,onReady;
+let hs=null,fx=null,f0=0;
+document.querySelectorAll('.card').forEach(c=>{c.addEventListener('pointerenter',()=>{hs=c.dataset.opt;onHover&&onHover(hs)});c.addEventListener('pointerleave',()=>{hs=null;onHover&&onHover(null)})});
+const intro=[["Narrator", "The Quidditch pitch is roaring. Brooms streak overhead, the crowd is on its feet, and somebody has just shouted your name."], ["Madam Hooch", "You there! We are one player short. Pick a role, quickly!"], ["The Sorting Hat", "Quickly now. I am timing you, you know."]],outcomes={"seeker": [["Narrator", "You spot a flash of gold and dive. Wind screams in your ears as the Snitch darts straight past your fingers."], ["The Sorting Hat", "Bold. A little reckless. Hmm. I will remember that."]], "beater": [["Narrator", "A Bludger comes screaming toward your teammate. You swing, and it rockets across the pitch with a crack."], ["The Sorting Hat", "Loyal, and rather fierce. Hmm. I will remember that."]], "keeper": [["Narrator", "The Quaffle flies straight at the middle hoop. You throw yourself in front of it and it bounces away, harmless."], ["The Sorting Hat", "Steady, and protective. Hmm. I will remember that."]], "spectator": [["Narrator", "You stay in the stands and watch the whole game unfold below you, the crowd roaring around you."], ["The Sorting Hat", "Watching first, acting later. Hmm. I will remember that."]]};
+Story.play(intro,()=>{opts.style.display='flex';Beast.begin('quidditch');onReady&&onReady()});
+Beast.options('.card',{"seeker": {"phoenix": 2, "niffler": 1}, "beater": {"hippogriff": 2}, "keeper": {"bowtruckle": 2}, "spectator": {"thestral": 2}},o=>{opts.style.display='none';fx=o;f0=frameCount;Story.play(outcomes[o],()=>cont.style.display='inline-block')},{});
+cont.onclick=()=>Beast.go('hall.html');
+
+
+let bg,cf=[];const HC=[[180,30,40],[30,100,50],[30,60,150],[225,195,50]];
+function setup(){createCanvas(windowWidth,windowHeight);mk()}
+function windowResized(){resizeCanvas(windowWidth,windowHeight);mk()}
+function mk(){const{w,h}=Lg(),g=createGraphics(w,h);randomSeed(4);
+  for(let y=0;y<h*.5;y++){const t=y/(h*.5);g.stroke(lerp(90,190,t),lerp(120,200,t),lerp(170,225,t));g.line(0,y,w,y)}
+  g.noStroke();for(let i=0;i<7;i++){g.fill(255,255,255,70);g.ellipse(random(w),random(h*.04,h*.3),random(150,300),random(40,70))}
+  for(let y=h*.5;y<h;y++){const t=(y-h*.5)/(h*.5),st=floor(pow(t,.7)*14)%2;g.stroke(46+st*12,116+st*14,58);g.line(0,y,w,y)}                    // striped pitch
+  g.noStroke();g.fill(70,60,66);g.rect(0,h*.4,w,h*.1);for(let i=0;i<500;i++){g.fill(random(HC)[0],random(60,160),random(60,160),230);g.circle(random(w),random(h*.41,h*.49),random(5,9))}   // far stands crowd
+  for(const sd of[0,1]){const x0=sd?w*.82:0;g.fill(78,66,70);g.quad(x0,h*.3,x0+w*.18,h*.4,x0+w*.18,h*.6,x0,h*.75);for(let i=0;i<260;i++){g.fill(random(HC)[0]+random(60),random(70,150),random(70,150));g.circle(x0+random(w*.18),random(h*.33,h*.65),random(5,10))}}  // side stands
+  for(const i of[-.14,0,.14]){const x=w/2+i*w,ph=h*(i?.17:.23);g.stroke(215,175,70);g.strokeWeight(5);g.line(x,h*.5,x,h*.5-ph);g.noFill();g.strokeWeight(5);g.ellipse(x,h*.5-ph,w*.035,w*.035)}   // goal hoops
+  bg=g}
+function rider(x,y,s,c,ang){push();translate(x,y);rotate(ang);stroke(90,60,34);strokeWeight(s*.12);line(-s,0,s,0);stroke(200,170,90);strokeWeight(s*.3);line(-s,0,-s*1.7,s*.1);noStroke();fill(c[0],c[1],c[2]);ellipse(0,-s*.45,s*.5,s*.75);fill(235,200,170);circle(0,-s*.98,s*.32);pop()}
+function snitch(x,y,s){noStroke();glow(x,y,s*5,'255,220,100',.4);fill(225,180,40);circle(x,y,s);fill(255,255,255,200);const f=sin(frameCount*.9)*.5;push();translate(x,y);for(const d of[-1,1]){push();rotate(d*(.4+f));ellipse(d*s*.9,0,s*1.3,s*.3);pop()}pop()}
+function draw(){const{w,h,ox}=Lg(),t=fx?min((frameCount-f0)/170,1):0;push();translate(ox,0);image(bg,0,0);
+  for(let i=0;i<9;i++){const p=frameCount*.012*(1+i%3*.3)+i*1.7,x=w*(.5+.38*sin(p)),y=h*(.28+.1*cos(p*1.3+i)),s=h*(.022+.008*(i%3)),d=cos(p)>0?1:-1;push();translate(x,y);scale(d,1);rider(0,0,s,HC[i%4],sin(p)*.2);pop()}
+  snitch(w*(.5+.42*sin(frameCount*.021+noise(frameCount*.01)*3)),h*(.2+.15*noise(frameCount*.012,7)),h*.012);
+  if(fx==='seeker'){const x=lerp(-w*.1,w*1.1,t),y=h*.3+sin(t*10)*h*.05;for(let k=1;k<10;k++){fill(255,220,100,25);circle(x-k*14,y,h*.03)}snitch(x,y,h*.03)}
+  if(fx==='beater'){const x=lerp(w*.1,w*.9,t),y=h*.38-sin(t*PI)*h*.18;for(let k=1;k<8;k++){fill(30,30,30,30);circle(x-k*16,y+k*3,h*.035)}fill(25);circle(x,y,h*.04);stroke(80);strokeWeight(2);for(let k=0;k<8;k++){const a=k*PI/4;line(x+cos(a)*h*.02,y+sin(a)*h*.02,x+cos(a)*h*.03,y+sin(a)*h*.03)}noStroke()}
+  if(fx==='keeper'){const k=min(t*2,1),x=t<.5?lerp(w*.3,w*.5,k):lerp(w*.5,w*.8,(t-.5)*2),y=t<.5?lerp(h*.5,h*.3,k):lerp(h*.3,h*.08,(t-.5)*2);fill(190,40,40);circle(x,y,h*.05);glow(w*.5,h*.27,h*.1,'255,220,100',t>.45&&t<.7?.6:0)}
+  if(fx==='spectator'&&t<.9)for(let k=0;k<4;k++){const c=random(HC);cf.push({x:random(w),y:-10,vy:random(2,5),vx:random(-1,1),l:200,c,r:random(5,9)})}
+  for(let i=cf.length-1;i>=0;i--){const p=cf[i];p.x+=p.vx+sin(p.y*.05);p.y+=p.vy;p.l--;if(p.y>h||p.l<=0){cf.splice(i,1);continue}fill(p.c[0]+40,p.c[1]+40,p.c[2]+40);rect(p.x,p.y,p.r,p.r*.6)}
+  pop();vignette(.4)}
+
+</script></body></html>

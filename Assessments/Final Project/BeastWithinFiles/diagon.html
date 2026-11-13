@@ -1,0 +1,51 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Beast Within | Diagon Alley</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script></head><body>
+<div class="trail" data-step="3"></div>
+<div class="stage"><div class="place">Diagon Alley</div>
+<div class="speech"><div class="who" id="who"></div><div id="say"></div><div class="hint" id="hint">click to continue ▸</div></div>
+<div class="opts" id="opts" style="display:none"><div class="card" data-opt="wand">Ollivanders<small>A wand, perhaps?</small></div><div class="card" data-opt="broom">Quidditch Supplies<small>A shiny new broom</small></div><div class="card" data-opt="book">Flourish & Blotts<small>A very old book</small></div><div class="card" data-opt="pet">Magical Menagerie<small>A pet of your own</small></div></div>
+<button class="btn" id="cont" style="display:none">Continue</button></div>
+<script src="tracker.js"></script><script src="story.js"></script><script src="scene.js"></script><script src="creatures.js"></script>
+<script>
+var onHover,onReady;
+let hs=null,fx=null,f0=0;
+document.querySelectorAll('.card').forEach(c=>{c.addEventListener('pointerenter',()=>{hs=c.dataset.opt;onHover&&onHover(hs)});c.addEventListener('pointerleave',()=>{hs=null;onHover&&onHover(null)})});
+const intro=[["Narrator", "The Leaky Cauldron's back door opens onto a crooked cobbled street. Lanterns glow, owls hoot, and everyone seems to know exactly where they are going."], ["Narrator", "In your pocket is a single gold Galleon. It is all you have."], ["Shopkeeper", "One Galleon, hm? Take your time, dear. But do choose wisely. It will not stretch far."], ["The Sorting Hat", "So, what is the first thing you buy?"]],outcomes={"wand": [["Ollivander", "Curious... very curious. The wand chooses the wizard, you know."], ["Narrator", "A warm tingle runs up your arm, and gold sparks burst from the shop window."], ["The Sorting Hat", "Power, or just a little magic? Hmm. I will remember that."]], "broom": [["Shopkeeper", "A fine choice! Faster than you can say Quidditch."], ["Narrator", "The broom tugs upward and yanks you off the cobbles for one wild second before you let go."], ["The Sorting Hat", "Freedom and speed. Hmm. I will remember that."]], "book": [["Narrator", "The pages rustle as if whispering to each other. The clerk nods slowly, as though you have passed a test."], ["Narrator", "Loose pages flutter out of the window and drift above the street."], ["The Sorting Hat", "A thinker. Hmm. I will remember that."]], "pet": [["Narrator", "Inside the Menagerie, an owl with huge amber eyes stares at you, then hops onto your shoulder as if you had already agreed."], ["Shopkeeper", "Well! She never does that. She must like you."], ["The Sorting Hat", "Companionship. Hmm. I will remember that."]]};
+Story.play(intro,()=>{opts.style.display='flex';Beast.begin('diagon');onReady&&onReady()});
+Beast.options('.card',{"wand": {"phoenix": 1, "nargle": 1}, "broom": {"hippogriff": 2}, "book": {"bowtruckle": 1, "thestral": 1}, "pet": {"niffler": 2}},o=>{opts.style.display='none';fx=o;f0=frameCount;Story.play(outcomes[o],()=>cont.style.display='inline-block')},{});
+cont.onclick=()=>Beast.go('quidditch.html');
+
+
+let bg,pp=[];const IDX={wand:0,broom:1,book:2,pet:3},SH=[['Ollivanders',[104,80,58]],['Quidditch Supplies',[58,86,108]],['Flourish & Blotts',[104,58,80]],['Magical Menagerie',[64,100,68]]];
+function setup(){createCanvas(windowWidth,windowHeight);mk()}
+function windowResized(){resizeCanvas(windowWidth,windowHeight);mk()}
+function mk(){const{w,h}=Lg(),g=createGraphics(w,h);randomSeed(2);
+  for(let y=0;y<h*.4;y++){const t=y/(h*.4);g.stroke(lerp(52,210,t*t),lerp(48,140,t*t),lerp(96,130,t));g.line(0,y,w,y)}                       // dusk sky
+  g.noStroke();g.fill(48,42,44);g.rect(0,h*.6,w,h*.4);
+  for(let i=0;i<650;i++){const y=random(h*.6,h),t=(y-h*.6)/(h*.4);g.fill(random(50,92),random(44,82),random(46,82));g.ellipse(random(w),y,random(14,34)*(t+.4),random(5,12)*(t+.4))}   // cobbles
+  SH.forEach((s,i)=>{const x=w*(.03+i*.245),bw=w*.22,top=h*(.16+(i%2)*.05);
+    g.fill(s[1]);g.beginShape();g.vertex(x,h*.6);g.vertex(x+bw,h*.6);g.vertex(x+bw*.98,top);g.vertex(x+bw*.02,top+(i%2?-1:1)*h*.02);g.endShape(CLOSE);
+    g.fill(40,28,30);g.triangle(x-bw*.05,top+h*.01,x+bw*1.05,top,x+bw*.5,top-h*.11);g.fill(44,34,34);g.rect(x+bw*.78,top-h*.13,bw*.08,h*.1);
+    g.stroke(36,26,24);g.strokeWeight(4);for(let k=1;k<4;k++)g.line(x+bw*k/4,top,x+bw*k/4,h*.6);g.line(x,h*.3,x+bw,h*.3);g.noStroke();
+    g.fill(30,20,16);g.rect(x+bw*.38,h*.5,bw*.24,h*.1,4);g.fill(60,42,30);g.rect(x+bw*.08,h*.235,bw*.84,h*.05,3);
+    g.fill(235,215,160);g.textFont('Cinzel');g.textAlign(CENTER,CENTER);g.textSize(max(9,w*.0105));g.text(s[0],x+bw/2,h*.26)});bg=g}
+function item(i,x,y,w,h){push();translate(x,y);if(i==0){stroke(215,175,95);strokeWeight(3);for(let k=0;k<3;k++)line(w*(.15+k*.12),h*.85,w*(.5+k*.12),h*.2);noStroke();fill(255,240,170,120+100*sin(frameCount*.1));circle(w*.55,h*.2,6)}
+  if(i==1){stroke(90,60,34);strokeWeight(5);line(w*.1,h*.8,w*.8,h*.3);noStroke();fill(200,160,80);triangle(w*.8,h*.2,w*.95,h*.45,w*.7,h*.4)}
+  if(i==2){for(let k=0;k<4;k++){fill([[150,40,50],[40,90,60],[60,60,140],[170,130,50]][k]);rect(w*.2,h*(.75-k*.18),w*(.6-(k%2)*.1),h*.16)}}
+  if(i==3){stroke(40,30,24);strokeWeight(2);for(let k=1;k<7;k++)line(w*k/7,0,w*k/7,h);noStroke();fill(120,86,56);ellipse(w*.5,h*.62,w*.3,h*.5);fill(255,200,60);const b=frameCount%200<8?1:w*.06;ellipse(w*.44,h*.52,w*.06,b);ellipse(w*.56,h*.52,w*.06,b)}pop()}
+function owl(x,y,s,f){push();translate(x,y);noStroke();fill(130,95,60);for(const d of[-1,1]){push();rotate(d*(.5+sin(f*.3)*.5));ellipse(d*s*.55,0,s*.8,s*.3);pop()}ellipse(0,0,s*.6,s*.8);fill(240,220,190);ellipse(0,s*.1,s*.4,s*.5);fill(255,200,60);circle(-s*.12,-s*.15,s*.2);circle(s*.12,-s*.15,s*.2);fill(0);circle(-s*.12,-s*.15,s*.08);circle(s*.12,-s*.15,s*.08);pop()}
+function draw(){const{w,h,ox}=Lg(),t=fx?min((frameCount-f0)/170,1):0;push();translate(ox,0);image(bg,0,0);
+  SH.forEach((s,i)=>{const x=w*(.03+i*.245),bw=w*.22,wx=x+bw*.12,wy=h*.31,ww=bw*.76,wh=h*.17,on=(hs&&IDX[hs]===i)||(fx&&IDX[fx]===i);
+    noStroke();fill(255,200,100,on?255:150+20*sin(frameCount*.05+i));rect(wx,wy,ww,wh,4);glow(wx+ww/2,wy+wh/2,bw*.9,'255,190,90',on?.55:.22);item(i,wx,wy,ww,wh);
+    stroke(30,20,14);strokeWeight(4);noFill();rect(wx,wy,ww,wh,4);line(wx+ww/2,wy,wx+ww/2,wy+wh);noStroke()});
+  for(let i=0;i<5;i++){const x=w*(.14+i*.18);stroke(30);strokeWeight(2);line(x,h*.5,x,h*.56);noStroke();glow(x,h*.58,h*.1,'255,180,70',.45+.1*sin(frameCount*.07+i));fill(255,225,150);ellipse(x,h*.58,9,13)}   // street lanterns
+  if(fx==='wand'&&t<.85)for(let k=0;k<3;k++)pp.push({x:w*.03+w*.11,y:h*.4,vx:random(-3,3),vy:random(-4,.5),l:60,c:[255,225,120],r:random(3,6)});
+  if(fx==='book'&&frameCount%4==0&&t<.85)pp.push({x:w*(.03+2*.245)+w*.11,y:h*.4,vx:random(-1.5,1.5),vy:random(-3,-1),l:90,c:[245,240,225],r:12,pg:1,a:random(TWO_PI)});
+  for(let i=pp.length-1;i>=0;i--){const p=pp[i];p.x+=p.vx;p.y+=p.vy;p.vy+=p.pg?-.01:.08;p.l--;if(p.l<=0){pp.splice(i,1);continue}fill(p.c[0],p.c[1],p.c[2],p.l*4);if(p.pg){push();translate(p.x,p.y);rotate(p.a+frameCount*.1);rect(-p.r/2,-p.r/3,p.r,p.r*.7);pop()}else circle(p.x,p.y,p.r)}
+  if(fx==='broom'&&t<1){const bx=lerp(-w*.1,w*1.1,t),by=h*.17+sin(t*7)*h*.04;push();translate(bx,by);rotate(-.1);stroke(90,60,34);strokeWeight(6);line(-60,0,50,0);noStroke();fill(205,165,85);triangle(-60,0,-110,-14,-110,14);pop();glow(bx-80,by,60,'255,210,120',.3)}
+  if(fx==='pet'&&t>.1){const k=min((t-.1)*1.2,1);owl(lerp(w*(.03+3*.245)+w*.11,w*.5,k),lerp(h*.4,h*.18,k)+sin(frameCount*.15)*8,h*.1*(.5+k*.5),frameCount)}
+  pop();vignette(.55)}
+
+</script></body></html>
