@@ -1,0 +1,38 @@
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#0d0b1f;color:#EFE6D2;font:20px/1.5 'IM Fell English',Georgia,serif}
+canvas{position:fixed;top:0;left:0;z-index:0}
+body{transition:opacity .8s}body.out{opacity:0}
+.stage{position:fixed;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:9vh;text-align:center;pointer-events:none}
+.stage>*{pointer-events:auto}
+.place{font-family:'Cinzel',serif;letter-spacing:.18em;color:#C9A24B;font-size:13px;text-transform:uppercase;margin-bottom:6px}
+.speech{max-width:640px;min-height:3.4em;padding:14px 24px;background:rgba(20,18,43,.9);border:2px solid #C9A24B;box-shadow:0 0 30px rgba(201,162,75,.25);margin-bottom:18px}
+.opts{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.btn,.card{font-family:'Cinzel',serif;background:rgba(20,18,43,.9);color:#C9A24B;border:2px solid #C9A24B;cursor:pointer;transition:.2s}
+.btn{padding:8px 34px;font-size:16px}
+.card{width:210px;padding:12px;font-size:15px}
+.card small{display:block;font:italic 15px 'IM Fell English',serif;color:#EFE6D2;margin-top:4px}
+.btn:hover,.card:hover{background:#C9A24B;color:#14122B;transform:translateY(-4px) rotate(-1deg);box-shadow:0 0 24px rgba(201,162,75,.6)}
+.card:hover small{color:#14122B}
+.trail{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:2;letter-spacing:.4em;color:#C9A24B;font-size:14px}
+.memory{position:fixed;bottom:8px;left:0;right:0;text-align:center;z-index:2;font:11px sans-serif;color:#9a9ab5}
+.debug{position:fixed;top:40px;right:10px;z-index:5;background:#000d;color:#9f9;font:11px monospace;padding:8px;max-width:340px;max-height:75vh;overflow:auto;white-space:pre;display:none}
+.speech{cursor:pointer;text-align:left;width:640px}
+.who{font-family:'Cinzel',serif;font-size:13px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px}
+.hint{font:11px sans-serif;color:#9a9ab5;margin-top:6px;text-align:right;visibility:hidden}
+.speech{max-width:calc(100vw - 20px)}.opts{max-width:calc(100vw - 20px)}
+.speech.gone{opacity:0;pointer-events:none;transition:opacity .8s}
+.card.sel{background:#C9A24B;color:#14122B;transform:translateY(-6px) scale(1.04)}.card.sel small{color:#14122B}
+.mood{position:fixed;top:44px;left:50%;transform:translateX(-50%);z-index:2;font-style:italic;color:#C9A24B;text-align:center;width:90vw;pointer-events:none}
+.mood.pulse{animation:pulse .6s}
+@keyframes pulse{0%{opacity:0;transform:translateX(-50%) translateY(-8px)}100%{opacity:1;transform:translateX(-50%)}}
+.hint2{position:fixed;top:44px;left:50%;transform:translateX(-50%);z-index:2;font:13px sans-serif;color:#EFE6D2;background:#000a;padding:6px 14px;border-radius:20px;transition:opacity .8s,transform .8s;pointer-events:none}
+.hint2.gone{opacity:0;transform:translateX(-50%) translateY(-20px)}
+.reveal{max-width:540px;background:rgba(20,18,43,.93);border:2px solid #C9A24B;padding:16px 24px;margin-bottom:14px;opacity:0;transform:translateY(40px) scale(.9);transition:opacity 1s,transform 1s;display:none}
+.reveal.on{opacity:1;transform:none}.reveal h2{font:700 34px 'Cinzel',serif;margin:0 0 6px;color:#C9A24B}.reveal p{margin:6px 0}
+@media (max-width:520px){html,body{font-size:16px}.stage{padding-bottom:3vh}.speech{padding:10px 14px;font-size:16px;max-height:34vh;overflow:auto;margin-bottom:10px}.opts{gap:8px}.card{flex:1 1 42%;width:auto;min-width:120px;padding:8px;font-size:13px}.card small{font-size:13px}.btn{padding:8px 24px;font-size:14px}.place{font-size:11px}.trail{font-size:11px;top:8px}.mood,.hint2{top:30px;font-size:13px}.reveal{padding:12px 14px}.reveal h2{font-size:26px}}
+.back{position:fixed;top:12px;left:12px;z-index:6;font:600 13px 'Cinzel',serif;color:#C9A24B;background:rgba(20,18,43,.85);border:2px solid #C9A24B;padding:5px 14px;cursor:pointer;transition:.2s}
+.back:hover{background:#C9A24B;color:#14122B;transform:translateX(-3px)}
+@media (max-width:520px){.back{top:5px;left:5px;font-size:11px;padding:3px 9px}}
+.snd{position:fixed;top:12px;right:12px;z-index:6;font:600 13px 'Cinzel',serif;color:#C9A24B;background:rgba(20,18,43,.85);border:2px solid #C9A24B;padding:5px 14px;cursor:pointer;transition:.2s}
+.snd:hover{background:#C9A24B;color:#14122B}.debug{top:48px}
+@media (max-width:520px){.snd{top:5px;right:5px;font-size:11px;padding:3px 9px}}

@@ -8,9 +8,9 @@
   <div class="speech" id="say"></div>
   <div class="opts" id="btns"><button class="btn" id="acc">Accept</button><button class="btn" id="rej">Reject</button></div>
 </div>
-<script src="tracker.js"></script><script src="scene.js"></script><script src="creatures.js"></script>
+<script src="tracker.js"></script><script src="music.js"></script><script src="scene.js"></script><script src="creatures.js"></script><script>Object.assign(FILM,{"warm": [255, 200, 120, 20], "rays": true})</script>
 <script>
-Beast.fresh(); // new run: the timer starts here
+if(!location.search.includes('back'))Beast.fresh(); // new run: the timer starts here
 let talking=false,stars=[],candles=[],dust=[],bg;
 function say(txt,cb){const el=document.getElementById('say');el.textContent='';let i=0;talking=true;
   const id=setInterval(()=>{el.textContent+=txt[i++];if(i>=txt.length){clearInterval(id);talking=false;cb&&cb()}},38)}

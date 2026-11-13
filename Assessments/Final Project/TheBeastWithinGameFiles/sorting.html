@@ -1,0 +1,28 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Beast Within | The Sorting</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script></head><body>
+<div class="trail" data-step="8"></div>
+<div class="stage"><div class="place">The Sorting</div>
+<div class="speech"><div class="who" id="who"></div><div id="say"></div><div class="hint" id="hint">click to continue ▸</div></div>
+<div class="reveal" id="reveal"></div></div>
+<script src="tracker.js"></script><script src="music.js"></script><script src="story.js"></script><script src="scene.js"></script><script src="creatures.js"></script><script>Object.assign(FILM,{"warm": [255, 210, 150, 22], "rays": true})</script>
+<script>
+let talking=false,phase=0,rf=0,stars=[],candles=[],burst=[];
+const V=Beast.verdict(),CR=CREATURES[V.final];
+const lines=[['The Sorting Hat','Hmmm... difficult. Very difficult.'],['The Sorting Hat','I see curiosity. I see hesitation. And I see '+V.hovers+' things you looked at but did not choose.'],['The Sorting Hat','Yes... I know exactly where to put you.']];
+Story.play(lines,()=>{const sp=document.querySelector('.speech');sp.classList.add('gone');setTimeout(()=>sp.style.display='none',800);phase=1;rf=frameCount;window.Music&&Music.stinger();
+  setTimeout(()=>{const r=document.getElementById('reveal');r.innerHTML='<div class="place">You have been sorted</div><h2>You are a '+CR.n+'</h2><p>'+CR.d+'</p><p><b>You would belong with:</b> '+CR.m+'.</p><button class="btn" id="go">What did the hat learn?</button>';r.style.display='block';document.getElementById('go').onclick=()=>Beast.go('learned.html');requestAnimationFrame(()=>requestAnimationFrame(()=>r.classList.add('on')))},1600)});
+function setup(){createCanvas(windowWidth,windowHeight);for(let i=0;i<150;i++)stars.push([random(width),random(height),random(1,2.6),random(TWO_PI)]);for(let i=0;i<22;i++)candles.push({x:random(width),y:random(height*.04,height*.55),p:random(100)})}
+function windowResized(){resizeCanvas(windowWidth,windowHeight)}
+function draw(){const w=width,h=height,cx=w/2,cy=h*.36,t=phase?frameCount-rf:0;background(10,8,26);noStroke();
+  for(const s of stars){fill(239,230,210,110+110*sin(frameCount*.04+s[3]));circle(s[0],s[1],s[2])}
+  for(const c of candles){const x=c.x+sin(frameCount*.01+c.p)*8,y=c.y+noise(c.p,frameCount*.004)*30;glow(x,y,36,'255,190,90',.4);fill(236,226,200);rect(x-3,y,6,22);fill(255,210,110);ellipse(x,y-5,6,12+random(2))}
+  if(!phase){talking=Story.state.typing&&Story.state.who==='The Sorting Hat';const hs_=min(w*.8,h)*.27;fill(80,52,32);stroke(30,18,10);strokeWeight(3);ellipse(cx,cy+hs_*.2,hs_*1.1,hs_*.2);for(const lx of[-.4,0,.4]){strokeWeight(hs_*.06);line(cx+lx*hs_,cy+hs_*.25,cx+lx*hs_*1.4,cy+hs_*.8)}noStroke();push();translate(random(-3,3),random(-2,2));hat(cx,cy+sin(frameCount*.03)*3,hs_);pop()}
+  else{const s=min(w*.6,h)*.26,k=min(t/40,1);glow(cx,cy,s*2.4,CR.c,.35*k);stroke(255,255,255,40*k);strokeWeight(2);for(let i=0;i<14;i++){const a=i*TWO_PI/14+frameCount*.01;line(cx+cos(a)*s*.9,cy+sin(a)*s*.9,cx+cos(a)*s*2.4,cy+sin(a)*s*2.4)}noStroke();
+    if(t===1)for(let i=0;i<100;i++)burst.push({x:cx,y:cy,vx:random(-7,7),vy:random(-7,7),l:90});
+    push();translate(cx,cy);scale(.3+.7*k);CR.fn(0,0,s);pop();
+    for(let i=burst.length-1;i>=0;i--){const p=burst[i];p.x+=p.vx;p.y+=p.vy;p.vx*=.96;p.vy*=.96;p.l--;if(p.l<=0){burst.splice(i,1);continue}fill(...CR.c.split(',').map(Number),p.l*3);circle(p.x,p.y,5)}
+    if(t<18){fill(255,255,255,255*(1-t/18));rect(0,0,w,h)}}
+  vignette(.55)}
+</script></body></html>

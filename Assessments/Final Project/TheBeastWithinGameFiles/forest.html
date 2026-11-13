@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>The Beast Within | The Forbidden Forest</title>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Beast Within | The Forbidden Forest</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script></head><body>
@@ -13,7 +13,7 @@
   </div>
   <button class="btn" id="cont" style="display:none">Continue</button>
 </div>
-<script src="tracker.js"></script><script src="story.js"></script>
+<script src="tracker.js"></script><script src="music.js"></script><script src="scene.js"></script><script src="creatures.js"></script><script>Object.assign(FILM,{"warm": [150, 190, 200, 28], "rays": true})</script><script src="story.js"></script>
 <script>
 const intro=[
  ['Narrator','It is a very gloomy day. A cold mist clings to the Forbidden Forest, and the path under your boots is slick with wet leaves.'],
@@ -56,56 +56,6 @@ function tree(g,x,b,tw,col,l){g.noStroke();g.fill(col[0],col[1],col[2]);g.beginS
   g.noStroke();if(l<2)for(let k=0;k<5;k++){g.fill(max(0,col[0]-14),max(0,col[1]-8),max(0,col[2]-12),200);g.ellipse(x+random(-tw*4,tw*4),random(0,g.height*.12),tw*5,g.height*.07)}}
 function eyes(x,y,s,off,a=255){if((frameCount+off)%240<9){stroke(255,215,60,a);strokeWeight(2);line(x-s*1.5,y,x-s*.3,y);line(x+s*.3,y,x+s*1.5,y);noStroke();return}
   noStroke();fill(255,215,60,28*a/255);circle(x,y,s*5);for(const d of[-1,1]){push();translate(x+d*s*.95,y);rotate(d*-.25);fill(255,215,60,a);ellipse(0,0,s*1.5,s*.8);fill(10,a);ellipse(0,0,s*.3,s*.75);pop()}}
-// ================= NIFFLER (faces right) =================
-function niffler(x,y,s){push();translate(x,y);randomSeed(3);noStroke();
-  fill(0,0,0,70);ellipse(0,.42*s,.95*s,.12*s);                                                    // ground shadow
-  fill(20,16,16);ellipse(-.5*s,.12*s,.3*s,.16*s);                                                   // short tail
-  fill(24,20,20);ellipse(-.2*s,.35*s,.26*s,.14*s);ellipse(.2*s,.36*s,.26*s,.14*s);                  // back feet
-  stroke(205,195,175);strokeWeight(s*.01);for(const cx of[-.28,-.2,-.12,.12,.2,.28])line(cx*s,.39*s,cx*s-.02*s,.43*s);noStroke();   // claws
-  fill(26,22,22);ellipse(0,0,.9*s,.78*s);                                                           // round fluffy body
-  stroke(14,11,11);strokeWeight(s*.014);for(let i=0;i<170;i++){const a=random(TWO_PI),r=random(.85,1.08),px=cos(a)*.45*s*r,py=sin(a)*.39*s*r;line(px,py,px+cos(a)*s*.07,py+sin(a)*s*.07)}   // fur
-  noStroke();fill(66,56,50);ellipse(.04*s,.1*s,.5*s,.4*s);fill(18,12,10);ellipse(.04*s,-.02*s,.46*s,.09*s);   // belly pouch + opening
-  for(const c of[[-.1,-.03],[.0,-.05],[.1,-.03],[.18,-.04]]){fill(214,170,50);circle(c[0]*s,c[1]*s,.07*s);fill(255,235,150);circle(c[0]*s-.012*s,c[1]*s-.012*s,.02*s)}   // coins in pouch
-  stroke(24,20,20);strokeWeight(s*.1);noFill();line(.2*s,-.08*s,.4*s,.12*s);line(.4*s,.12*s,.55*s,0);noStroke();                    // arm
-  fill(30,25,25);ellipse(.56*s,-.01*s,.1*s,.09*s);stroke(30,25,25);strokeWeight(s*.016);line(.6*s,-.04*s,.64*s,-.07*s);line(.61*s,-.01*s,.66*s,-.02*s);noStroke();   // hand + fingers
-  fill(220,176,52);circle(.64*s,-.1*s,.13*s);fill(255,238,160);circle(.62*s,-.12*s,.04*s);                                          // stolen coin
-  const tw=.5+.5*sin(frameCount*.2);stroke(255,245,200,200*tw);strokeWeight(2);line(.64*s,-.2*s,.64*s,-.05*s);line(.56*s,-.12*s,.72*s,-.12*s);noStroke();
-  fill(27,23,23);ellipse(.38*s,-.22*s,.54*s,.46*s);stroke(14,11,11);strokeWeight(s*.012);                                          // head + fur
-  for(let i=0;i<90;i++){const a=random(PI*.9,PI*2.2),px=.38*s+cos(a)*.27*s,py=-.22*s+sin(a)*.23*s;line(px,py,px+cos(a)*s*.05,py+sin(a)*s*.05)}noStroke();
-  fill(26,22,22);ellipse(.2*s,-.43*s,.13*s,.15*s);fill(110,70,70);ellipse(.2*s,-.43*s,.06*s,.08*s);                                    // ear
-  fill(54,47,44);beginShape();vertex(.55*s,-.34*s);bezierVertex(.75*s,-.4*s,1.0*s,-.32*s,1.03*s,-.22*s);bezierVertex(1.0*s,-.12*s,.75*s,-.08*s,.55*s,-.12*s);endShape(CLOSE);   // long duck-bill snout
-  stroke(125,115,108,160);strokeWeight(s*.01);noFill();bezier(.6*s,-.33*s,.75*s,-.37*s,.92*s,-.31*s,1.0*s,-.25*s);line(.58*s,-.2*s,1.0*s,-.2*s);noStroke();
-  fill(10);circle(.95*s,-.27*s,.022*s);circle(.98*s,-.23*s,.022*s);                                                                  // nostrils
-  fill(6);circle(.5*s,-.34*s,.085*s);fill(255,235);circle(.52*s,-.36*s,.025*s);                                                      // shiny bead eye
-  stroke(14,11,11);strokeWeight(s*.016);line(.43*s,-.42*s,.55*s,-.4*s);                                                              // brow
-  stroke(210,200,190,150);strokeWeight(1);line(.9*s,-.2*s,1.06*s,-.14*s);line(.9*s,-.18*s,1.06*s,-.1*s);                             // whiskers
-  pop();randomSeed(millis())}
-
-// ================= THESTRAL (faces left, a = opacity 0-255) =================
-function thestral(x,y,s,a){push();translate(x,y);
-  noStroke();fill(200,220,235,18*a/255);ellipse(0,-.15*s,1.7*s,1.4*s);                                   // pale mist glow so the black body shows
-  const rim=[110,125,135],ink=[16,20,24];
-  const leg=(x0,y0,kx,ky,fx,fy)=>{noFill();for(const p of[[rim,.07,.55],[ink,.045,1]]){stroke(p[0][0],p[0][1],p[0][2],a*p[2]);strokeWeight(s*p[1]);line(x0*s,y0*s,kx*s,ky*s);strokeWeight(s*p[1]*.7);line(kx*s,ky*s,fx*s,fy*s)}
-    noStroke();fill(ink[0]+14,ink[1]+14,ink[2]+14,a);ellipse(kx*s,ky*s,.06*s,.07*s);fill(ink[0],ink[1],ink[2],a);ellipse(fx*s,(fy+.02)*s,.07*s,.04*s)};
-  stroke(rim[0],rim[1],rim[2],a*.55);strokeWeight(s*.012);fill(24,28,34,a);                               // bat-like leathery wing
-  beginShape();vertex(.05*s,-.2*s);bezierVertex(.1*s,-.6*s,.25*s,-.9*s,.5*s,-1.0*s);bezierVertex(.52*s,-.8*s,.6*s,-.72*s,.7*s,-.62*s);bezierVertex(.66*s,-.5*s,.76*s,-.42*s,.88*s,-.32*s);bezierVertex(.7*s,-.3*s,.5*s,-.26*s,.3*s,-.17*s);endShape(CLOSE);
-  stroke(75,84,92,a);strokeWeight(s*.014);line(.05*s,-.2*s,.5*s,-1.0*s);line(.05*s,-.2*s,.7*s,-.62*s);line(.05*s,-.2*s,.88*s,-.32*s);
-  leg(.3,.08,.38,.34,.32,.64);leg(.4,.08,.5,.34,.44,.64);                                                   // back legs
-  noFill();for(const p of[[rim,.05,.55],[ink,.03,1]]){stroke(p[0][0],p[0][1],p[0][2],a*p[2]);strokeWeight(s*p[1]);bezier(.55*s,-.15*s,.75*s,-.1*s,.78*s,.15*s,.7*s,.34*s)}   // whip tail
-  stroke(ink[0],ink[1],ink[2],a);strokeWeight(s*.012);for(let k=0;k<5;k++)line(.7*s,.34*s,(.68+k*.015)*s,(.4+k*.01)*s);
-  stroke(rim[0],rim[1],rim[2],a*.6);strokeWeight(s*.012);fill(ink[0],ink[1],ink[2],a);                    // gaunt torso
-  beginShape();vertex(-.4*s,-.2*s);bezierVertex(-.2*s,-.15*s,.1*s,-.14*s,.4*s,-.25*s);bezierVertex(.6*s,-.25*s,.62*s,0,.5*s,.12*s);bezierVertex(.2*s,.04*s,-.1*s,.08*s,-.38*s,.12*s);bezierVertex(-.5*s,.05*s,-.5*s,-.15*s,-.4*s,-.2*s);endShape(CLOSE);
-  noFill();stroke(rim[0],rim[1],rim[2],a*.45);strokeWeight(s*.01);for(let k=0;k<7;k++)bezier((-.3+k*.07)*s,-.14*s,(-.27+k*.07)*s,-.05*s,(-.27+k*.07)*s,.02*s,(-.3+k*.07)*s,.09*s);   // visible ribs
-  fill(ink[0]+10,ink[1]+10,ink[2]+10,a);stroke(rim[0],rim[1],rim[2],a*.6);circle(.4*s,-.17*s,.08*s);for(let k=0;k<9;k++)circle((-.35+k*.1)*s,-.2*s+(k>5?-.04*s:0),.025*s);   // hip bone + spine
-  fill(ink[0],ink[1],ink[2],a);stroke(rim[0],rim[1],rim[2],a*.6);strokeWeight(s*.012);                    // thin neck
-  beginShape();vertex(-.4*s,-.2*s);bezierVertex(-.5*s,-.4*s,-.62*s,-.55*s,-.7*s,-.7*s);vertex(-.8*s,-.62*s);bezierVertex(-.7*s,-.45*s,-.55*s,-.25*s,-.45*s,0);endShape(CLOSE);
-  leg(-.3,.08,-.32,.34,-.3,.64);leg(-.18,.08,-.14,.32,-.2,.64);                                             // front legs
-  fill(ink[0],ink[1],ink[2],a);stroke(rim[0],rim[1],rim[2],a*.7);strokeWeight(s*.012);                    // long reptilian skull
-  beginShape();vertex(-.66*s,-.82*s);bezierVertex(-.72*s,-.9*s,-.84*s,-.86*s,-.9*s,-.74*s);bezierVertex(-1.0*s,-.62*s,-1.08*s,-.52*s,-1.06*s,-.46*s);bezierVertex(-1.02*s,-.4*s,-.92*s,-.44*s,-.84*s,-.5*s);bezierVertex(-.76*s,-.56*s,-.7*s,-.6*s,-.64*s,-.66*s);endShape(CLOSE);
-  triangle(-.66*s,-.82*s,-.6*s,-.98*s,-.72*s,-.84*s);                                                       // ear
-  noFill();stroke(rim[0],rim[1],rim[2],a*.5);bezier(-.7*s,-.74*s,-.8*s,-.66*s,-.9*s,-.58*s,-.98*s,-.52*s);line(-.74*s,-.84*s,-.82*s,-.8*s);   // cheekbone, brow ridge
-  noStroke();fill(225,236,248,a);ellipse(-.78*s,-.74*s,.065*s,.045*s);fill(150,170,190,a*.6);ellipse(-.78*s,-.74*s,.03*s,.03*s);   // blank milky eye
-  fill(0,a);ellipse(-1.04*s,-.47*s,.02*s,.035*s);pop()}
 function draw(){
   const w=width,h=height,t=out?min((frameCount-fo)/170,1):0,px=mouseX/w-.5;
   push();if(out==='run')translate(random(-7,7),random(-5,5));

@@ -1,0 +1,63 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Beast Within | What the Hat Learned</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<style>html,body{overflow:auto;height:auto;background:#0b1220;color:#d7e3f4}canvas{pointer-events:none;z-index:0!important}
+.wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:54px 16px 80px}
+h1,h2{font-family:'Cinzel',serif;color:#7fd4e8;margin:0 0 10px}h1{font-size:clamp(28px,6vw,46px)}h2{font-size:19px}
+.sub{font-style:italic;font-size:21px;margin:6px 0 14px}.mute{color:#8aa0bd}
+.blk{background:rgba(14,26,44,.9);border:1px solid #2a4668;padding:16px 20px;margin:16px 0;transition:opacity .7s,transform .7s}.blk.gone{opacity:0;transform:translateX(70px)}
+.big{font-size:24px}.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.tile{border:1px solid #2a4668;padding:8px 10px}.tile b{display:block;font:700 21px monospace;color:#7fd4e8}.tile span{font:12px sans-serif;color:#8aa0bd}
+.scrollx{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:620px;font:13px/1.5 monospace}th,td{border-bottom:1px solid #22405f;padding:7px 8px;text-align:left;vertical-align:top}th{color:#7fd4e8;font-family:'Cinzel',serif;font-size:12px}
+.row{display:grid;grid-template-columns:200px 1fr 70px;gap:10px;align-items:center;font:13px monospace;margin:7px 0}.bar{background:#13243c;height:12px}.bar i{display:block;height:100%;width:0;background:#7fd4e8;transition:width 1.3s}
+.btn{margin:8px 10px 0 0;color:#7fd4e8;border-color:#7fd4e8}.btn:hover{background:#7fd4e8;color:#0b1220;box-shadow:0 0 18px #7fd4e888}
+#msg{display:none;font-size:26px;text-align:center;color:#7fd4e8;margin:40px 0}.back,.snd{border-color:#7fd4e8;color:#7fd4e8}
+@media (max-width:520px){.row{grid-template-columns:1fr 70px}.row .bar{grid-column:1/3}.big{font-size:20px}.wrap{padding-top:48px}}</style></head><body>
+<div class="wrap">
+<h1>What the Hat Learned</h1>
+<p class="sub">You thought you were playing a game. Here is what it was really collecting.</p>
+<button class="btn" id="again0">Play again</button>
+<section class="blk" id="vd"></section>
+<section class="blk"><h2>Your numbers</h2><div class="tiles" id="tiles"></div></section>
+<section class="blk"><h2>What you answered, and how long you took</h2><div class="scrollx"><table id="tbl"></table></div></section>
+<section class="blk"><h2>Seconds spent on each page</h2><div id="rows"></div></section>
+<section class="blk"><h2>Why this matters</h2><p>Shoshana Zuboff calls this <b>behavioral surplus</b>: the extra data you produce just by moving, pausing and hesitating. It was never needed to run the quiz. It is collected because it can be used to predict you. Everything above stayed in your browser, but on a real site it would not have.</p></section>
+<section class="blk big" id="perm"><h2>Did you give us permission for this?</h2><p>On page 1 the hat asked to read your mind. Accept and Reject did exactly the same thing.</p>
+<button class="btn" id="del">Delete everything</button><button class="btn" id="again">Play again</button></section>
+<div id="msg">Nothing saved.<br>Nothing left to harvest.<br><button class="btn" id="again2" style="margin-top:20px">Play again</button></div>
+</div>
+<script src="tracker.js"></script><script src="music.js"></script><script src="scene.js"></script><script src="creatures.js"></script>
+<script>Object.assign(FILM,{"warm":[0,0,0,0],"grain":14})</script>
+<script>
+const E=id=>document.getElementById(id),again=()=>Beast.go('index.html');
+['again0','again','again2'].forEach(i=>E(i).onclick=again);
+const ORDER=['index','forest','hut','diagon','quidditch','hall','potions','room','sorting','learned'];
+const PN={index:'1. Consent wall',forest:'2. Forbidden Forest',hut:"3. Hagrid's Hut",diagon:'4. Diagon Alley',quidditch:'5. Quidditch Pitch',hall:'6. Great Hall',potions:'7. Potions Class',room:'8. Room of Requirement',sorting:'9. The Sorting',learned:'10. This page'};
+const QT={forest:'Something rustles in the trees',hut:'Hagrid offers you food',diagon:'One Galleon to spend',quidditch:'Pick a Quidditch role',hall:'Where do you sit?',potions:'How do you brew the potion?',room:'What does the room become?'};
+const LB={forest:{investigate:'Investigated the noise',run:'Ran away',hide:'Hid and stayed still'},hut:{rock:'Rock cake',tart:'Treacle tart',stew:'Mystery stew'},diagon:{wand:'A wand',broom:'A broom',book:'A book',pet:'A pet'},quidditch:{seeker:'Seeker',beater:'Beater',keeper:'Keeper',spectator:'Spectator'},hall:{crowd:'Sat with the crowd',friend:'Sat with one friend',alone:'Sat alone'},potions:{follow:'Followed the recipe',improvise:'Improvised',copy:'Copied the neighbour'},room:{library:'A library',stage:'A stage',garden:'A garden',empty:'An empty room'}};
+const fmt=s=>s>=60?Math.floor(s/60)+'m '+Math.round(s%60)+'s':(Math.round(s*10)/10)+'s';
+try{
+const d=Beast.data(),T=d.time||{},qs=Object.keys(d.q||{}),has=qs.length>0,secs=Math.max(0,Math.round((Date.now()-d.start)/1000));
+if(has){const v=d.result||Beast.verdict(),cr=CREATURES[v.final],ca=CREATURES[v.answers],cb=CREATURES[v.behaviour];
+  E('vd').innerHTML='<h2>The prediction</h2><p class="big">The hat sorted you as a <b>'+cr.n+'</b>.</p><p>Your <b>answers</b> pointed to a '+ca.n+'. Your <b>behaviour</b> pointed to a '+cb.n+'.'+(v.answers!==v.final?' The hat trusted your behaviour over what you said.':' For once, they agreed.')+'</p><p class="mute">This is a prediction product: a guess about you, built from data you never knowingly gave away.</p>';
+  var AH=v.avgH,HV=v.hovers,CH=v.changes}
+else{E('vd').innerHTML='<h2>The hat has nothing on you yet</h2><p>No answers were found. Go back and play, then come here to see what was collected.</p>';var AH=0,HV=0,CH=0}
+const sum=Object.values(T).reduce((a,b)=>a+b,0);
+const TL=[['Time on site',fmt(secs)],['Pages visited',Object.keys(T).length+' of 10'],['Questions answered',qs.length+' of 7'],['Average hesitation',AH+' s'],['Looked at, not chosen',HV],['Changed your mind',CH+' times'],['Mouse travelled',Math.round(d.mouseDist||0)+' px'],['Clicks and taps',d.clicks||0],['Hall walked',Math.round((d.scrollDepth||0)*100)+'%'],['Rejected cookies',d.rejected?'Yes. It changed nothing.':'No']];
+E('tiles').innerHTML=TL.map(t=>'<div class="tile"><b>'+t[1]+'</b><span>'+t[0]+'</span></div>').join('');
+let rows='<tr><th>Page</th><th>Your answer</th><th>Time on page</th><th>Thinking time</th><th>Looked at, not chosen</th></tr>';
+rows+='<tr><td>'+PN.index+'</td><td>'+(d.rejected?'Rejected cookies (nothing changed)':'Accepted cookies')+'</td><td>'+(T.index?fmt(T.index):'-')+'</td><td>-</td><td>-</td></tr>';
+for(const k of Object.keys(QT)){const q=(d.q||{})[k];const o=q?Object.entries(q.hoverSec||{}).filter(e=>e[0]!==q.chosen).map(e=>e[0]+' ('+e[1]+'s)').join(', '):'';
+  rows+='<tr><td>'+PN[k]+'<br><span class="mute">'+QT[k]+'</span></td><td>'+(q?LB[k][q.chosen]||q.chosen:'Not answered')+'</td><td>'+(T[k]?fmt(T[k]):'-')+'</td><td>'+(q?q.hesitationSec+'s':'-')+'</td><td>'+(o||(q?'nothing':'-'))+'</td></tr>'}
+rows+='<tr><td>'+PN.sorting+'</td><td>'+(d.result?CREATURES[d.result.final].n:'-')+'</td><td>'+(T.sorting?fmt(T.sorting):'-')+'</td><td>-</td><td>-</td></tr>';
+E('tbl').innerHTML=rows;
+const mx=Math.max(1,...ORDER.map(k=>T[k]||0));
+E('rows').innerHTML=ORDER.filter(k=>k!=='learned').map(k=>'<div class="row"><span>'+PN[k]+'</span><div class="bar"><i data-w="'+((T[k]||0)/mx*100)+'%"></i></div><span>'+(T[k]?fmt(T[k]):'-')+'</span></div>').join('')+'<p class="mute">Total across pages: '+fmt(sum)+'</p>';
+setTimeout(()=>document.querySelectorAll('.bar i').forEach(i=>i.style.width=i.dataset.w),400);
+E('del').onclick=()=>{document.querySelectorAll('.blk:not(#perm)').forEach((b,i)=>setTimeout(()=>b.classList.add('gone'),i*160));setTimeout(()=>{Beast.clear();document.querySelectorAll('.blk,#again0').forEach(b=>b.style.display='none');E('msg').style.display='block'},1300)};
+}catch(err){E('vd').innerHTML='<h2>Something went wrong reading your data</h2><p class="mute">'+err.message+'</p><p>You can still play again.</p>'}
+let drops=[];function setup(){createCanvas(windowWidth,windowHeight).parent(document.body);textFont('monospace');for(let i=0;i<40;i++)drops.push({x:random(width),y:random(height),v:random(.4,1.4),s:floor(random(2))})}
+function windowResized(){resizeCanvas(windowWidth,windowHeight)}
+function draw(){background(11,18,32);stroke(127,212,232,14);for(let x=0;x<width;x+=40)line(x,0,x,height);for(let y=0;y<height;y+=40)line(0,y,width,y);noStroke();fill(127,212,232,60);textSize(12);for(const p of drops){p.y+=p.v;if(p.y>height){p.y=0;p.x=random(width)}text(p.s?'01':'10',p.x,p.y)}}
+</script></body></html>

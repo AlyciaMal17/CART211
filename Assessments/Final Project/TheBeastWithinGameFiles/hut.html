@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>The Beast Within | Hagrid's Hut</title>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Beast Within | Hagrid's Hut</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script></head><body>
@@ -13,7 +13,7 @@
   </div>
   <button class="btn" id="cont" style="display:none">Continue</button>
 </div>
-<script src="tracker.js"></script><script src="story.js"></script>
+<script src="tracker.js"></script><script src="music.js"></script><script src="scene.js"></script><script src="creatures.js"></script><script>Object.assign(FILM,{"warm": [255, 160, 80, 32]})</script><script src="story.js"></script>
 <script>
 const intro=[
  ['Narrator','Rain hammers on a crooked little chimney. You knock on a heavy wooden door, and a voice like rolling thunder answers.'],
@@ -28,13 +28,13 @@ const outcomes={
 Story.play(intro,()=>{opts.style.display='flex';Beast.begin('hut')});
 Beast.options('.card',{rock:{bowtruckle:1,hippogriff:1},tart:{hippogriff:2},stew:{nargle:2,niffler:1}},o=>{
   opts.style.display='none';fx=o;f0=frameCount;Story.play(outcomes[o],()=>cont.style.display='inline-block')});
-cont.onclick=()=>Beast.go('next.html');
+cont.onclick=()=>Beast.go('diagon.html');
 
 let bg,steam=[],sparks=[],fx=null,f0=0;
 function setup(){createCanvas(windowWidth,windowHeight);makeBg()}
 function windowResized(){resizeCanvas(windowWidth,windowHeight);makeBg()}
 function patch(g,x,y,s){g.fill(random([[150,110,60],[70,90,70],[130,100,130],[170,140,90],[60,70,120]]));g.noStroke();g.rect(x,y,s,s);g.stroke(220,200,160,150);g.strokeWeight(1);g.drawingContext.setLineDash([4,3]);g.noFill();g.rect(x+3,y+3,s-6,s-6);g.drawingContext.setLineDash([])}
-function makeBg(){const w=width,h=height,g=createGraphics(w,h);randomSeed(5);g.noStroke();
+function makeBg(){const w=max(width,height*1.25),h=height,g=createGraphics(w,h);randomSeed(5);g.noStroke();
   for(let x=0;x<w;x+=w/16){g.fill(random(48,70),random(32,46),random(20,32));g.rect(x,0,w/16-2,h*.66)}               // wooden wall
   g.fill(32,21,14);g.rect(0,0,w,h*.06);g.rect(w*.34,0,w*.02,h*.66);g.rect(0,h*.62,w,h*.04);                               // beam, post, skirting
   for(let i=0;i<8;i++){const x=w*(.38+i*.075);if(i%3==0){g.stroke(80,60,40);g.strokeWeight(2);g.line(x,h*.06,x,h*.14);g.noStroke();g.fill(150,80,40);g.ellipse(x,h*.17,w*.03,h*.05);g.fill(90,50,28);g.ellipse(x,h*.15,w*.02,h*.015)}     // copper pots
@@ -67,8 +67,8 @@ function fang(x,y,f,t){push();translate(x,y+sin(frameCount*.05)*1.5);noStroke();
   fill(20);circle(.34*f,-1.04*f,.05*f);fill(255);circle(.35*f,-1.05*f,.015*f);stroke(70,50,35);strokeWeight(2);line(.28*f,-1.1*f,.4*f,-1.08*f);noStroke();
   fill(95,65,45);push();translate(.1*f,-1.15*f);rotate(fx==='rock'?-.5:.2+sin(frameCount*.04)*.04);ellipse(-.02*f,fx==='rock'?-.1*f:.15*f,.16*f,.36*f);pop();pop()}
 function draw(){
-  const w=width,h=height,c=drawingContext,t=fx?min((frameCount-f0)/170,1):0,fxp=w*.67,fyb=h*.64,potx=w*.67,poty=h*.42;
-  push();if(fx==='rock'&&t<.25)translate(random(-5,5),random(-3,3));image(bg,0,0);
+  const w=max(width,height*1.25),h=height,ox=(width-w)*.55,c=drawingContext,t=fx?min((frameCount-f0)/170,1):0,fxp=w*.67,fyb=h*.64,potx=w*.67,poty=h*.42;
+  push();translate(ox,0);if(fx==='rock'&&t<.25)translate(random(-5,5),random(-3,3));image(bg,0,0);
   stroke(150,170,210,120);strokeWeight(1);for(let i=0;i<26;i++){const x=w*.065+((i*53)%100)/100*w*.14,y=h*.11+((frameCount*4+i*47)%(h*.21));line(x,y,x-2,y+10)}   // rain in window
   noStroke();fill(48,30,18);rect(fxp-w*.07,fyb-h*.035,w*.14,h*.035,8);                                                    // logs + flames
   for(let i=0;i<10;i++){const x=fxp-w*.065+i*w*.0145,fh=h*(.07+.13*noise(i*3,frameCount*.06))*(i>2&&i<7?1.3:1),b=fyb-h*.035;
@@ -87,6 +87,6 @@ function draw(){
   if(fx==='tart'&&frameCount%2==0)sparks.push({x:random(w*.3,w*.7),y:h*.62,v:random(.8,2),r:random(2,5)});
   for(let i=sparks.length-1;i>=0;i--){const p=sparks[i];p.y-=p.v;p.x+=sin(p.y*.05);if(p.y<h*.2){sparks.splice(i,1);continue}fill(255,220,100,200);circle(p.x,p.y,p.r)}
   pop();
-  const g2=c.createRadialGradient(fxp,h*.5,10,fxp,h*.5,w*.55);g2.addColorStop(0,'rgba(255,130,40,'+(.22+.1*noise(frameCount*.05)+(fx==='tart'?.1*t:0))+')');g2.addColorStop(1,'rgba(255,130,40,0)');c.fillStyle=g2;c.fillRect(0,0,w,h);
+  const g2=c.createRadialGradient(fxp+ox,h*.5,10,fxp+ox,h*.5,w*.55);g2.addColorStop(0,'rgba(255,130,40,'+(.22+.1*noise(frameCount*.05)+(fx==='tart'?.1*t:0))+')');g2.addColorStop(1,'rgba(255,130,40,0)');c.fillStyle=g2;c.fillRect(0,0,w,h);
   const vg=c.createRadialGradient(w/2,h*.5,h*.3,w/2,h*.5,max(w,h)*.75);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,0.6)');c.fillStyle=vg;c.fillRect(0,0,w,h)}
 </script></body></html>

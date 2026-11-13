@@ -1,0 +1,75 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Beast Within | The Room of Requirement</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script></head><body>
+<div class="trail" data-step="7"></div><div class="mood" id="mood">The hat is starting to decide...</div>
+<div class="stage"><div class="place">The Room of Requirement</div>
+<div class="speech"><div class="who" id="who"></div><div id="say"></div><div class="hint" id="hint">click to continue ▸</div></div>
+<div class="opts" id="opts" style="display:none"><div class="card" data-opt="library">A library<small>Quiet and endless</small></div><div class="card" data-opt="stage">A stage<small>Lights and applause</small></div><div class="card" data-opt="garden">A garden<small>Open air</small></div><div class="card" data-opt="empty">An empty room<small>Nothing at all</small></div></div>
+<button class="btn" id="cont" style="display:none">Continue</button></div>
+<script src="tracker.js"></script><script src="music.js"></script><script src="story.js"></script><script src="scene.js"></script><script src="creatures.js"></script><script>Object.assign(FILM,{"warm": [255, 220, 170, 16]})</script>
+<script>
+var onHover,onReady;
+let hs=null,fx=null,f0=0;
+document.querySelectorAll('.card').forEach(c=>{c.addEventListener('pointerenter',()=>{hs=c.dataset.opt;onHover&&onHover(hs)});c.addEventListener('pointerleave',()=>{hs=null;onHover&&onHover(null)})});
+const intro=[["Narrator", "Behind a blank stretch of wall, a door appears that was not there a moment ago. You pace past it three times, thinking hard, and it swings open."], ["Narrator", "Inside, the room is empty and waiting. It will become whatever you need most."], ["The Sorting Hat", "Hold still. Hover over what you want. I will be watching what you linger on."]],outcomes={"library": [["Narrator", "Shelves rise around you, warm lamplight pools on the floor, and pages turn softly in the quiet. You feel safe."], ["The Sorting Hat", "Interesting. I will remember that."]], "stage": [["Narrator", "Velvet curtains swing open. A spotlight finds you, and an invisible crowd begins to cheer."], ["The Sorting Hat", "Interesting. I will remember that."]], "garden": [["Narrator", "Grass spreads beneath your feet, fireflies drift through the air, and for the first time all day you breathe out."], ["The Sorting Hat", "Interesting. I will remember that."]], "empty": [["Narrator", "Nothing appears. The room stays bare and still, and somehow that is exactly what you wanted."], ["The Sorting Hat", "Interesting. I will remember that."]]};
+Story.play(intro,()=>{opts.style.display='flex';Beast.begin('room');onReady&&onReady()});
+Beast.options('.card',{"library": {"bowtruckle": 1, "thestral": 1}, "stage": {"phoenix": 1, "niffler": 1}, "garden": {"bowtruckle": 1, "hippogriff": 1}, "empty": {"nargle": 2, "thestral": 1}},o=>{opts.style.display='none';fx=o;f0=frameCount;Story.play(outcomes[o],()=>cont.style.display='inline-block')},{});
+cont.onclick=()=>Beast.go('sorting.html');
+
+
+let R=[],from=4,to=4,mix=1,dust=[],pp=[];const RI={library:0,stage:1,garden:2,empty:3},MOOD={library:'The hat is calm. It likes the quiet.',stage:'The hat leans in, curious.',garden:'The hat relaxes. Almost smiling.',empty:'The hat goes quiet. Uneasy.'};
+onHover=o=>{const m=document.getElementById('mood');m.textContent=o?MOOD[o]:'The hat is starting to decide...';m.classList.remove('pulse');void m.offsetWidth;m.classList.add('pulse')};
+function setup(){createCanvas(windowWidth,windowHeight);mk();for(let i=0;i<70;i++)dust.push({x:random(),y:random(),v:random(.0004,.0012),r:random(1,2.6)})}
+function windowResized(){resizeCanvas(windowWidth,windowHeight);mk()}
+function mk(){R=[0,1,2,3,4].map(room)}
+function room(i){const{w,h}=Lg(),g=createGraphics(w,h);randomSeed(20+i);g.noStroke();
+  if(i==0){g.background(46,28,18);                                                                           // ---- LIBRARY
+    g.fill(70,64,66);g.rect(0,0,w*.2,h*.7);g.rect(w*.8,0,w*.2,h*.7);for(let y=0;y<h*.7;y+=30)for(let x=0;x<w*.2;x+=60){g.fill(random(60,86),random(56,80),random(58,84));g.rect(x+2,y+2,56,26,2);g.rect(w*.8+x+2,y+2,56,26,2)}   // stone side walls
+    for(const wx of[.1,.9]){g.fill(30,44,88);g.rect(w*wx-w*.04,h*.1,w*.08,h*.34);g.arc(w*wx,h*.1,w*.08,h*.12,PI,TWO_PI);for(let k=0;k<30;k++){g.fill(255,255,255,random(120,255));g.circle(w*wx+random(-w*.035,w*.035),random(h*.06,h*.44),random(1,2.4))}
+      g.noFill();g.stroke(20,12,8);g.strokeWeight(6);g.rect(w*wx-w*.04,h*.1,w*.08,h*.34);g.arc(w*wx,h*.1,w*.08,h*.12,PI,TWO_PI);g.line(w*wx,h*.04,w*wx,h*.44);g.line(w*(wx-.04),h*.25,w*(wx+.04),h*.25);g.noStroke();glow(w*wx,h*.3,h*.35,'120,160,255',.18,g)}   // moonlit windows
+    for(let c=0;c<6;c++){const x=w*.2+c*w*.6/6;g.fill(36,22,14);g.rect(x,0,w*.1-6,h*.68);for(let r=0;r<7;r++){const y=h*.04+r*h*.09;g.fill(24,14,9);g.rect(x,y,w*.1-6,6);let bx=x+3;while(bx<x+w*.1-12){const bw=random(5,11),bh=h*random(.045,.075);g.push();g.fill(random([[140,40,40],[40,90,60],[60,70,140],[170,130,50],[110,60,110],[90,60,40]]));g.translate(bx,y);if(random()<.08)g.rotate(random(-.25,-.1));g.rect(0,-bh,bw,bh);g.fill(220,190,100,120);g.rect(1,-bh*.7,bw-2,1.5);g.pop();bx+=bw+1}}}   // packed bookshelves
+    g.fill(64,44,28);g.rect(0,h*.68,w,h*.32);g.stroke(48,32,20);for(let k=0;k<12;k++)g.line(0,h*.69+k*h*.028,w,h*.69+k*h*.028);g.noStroke();
+    for(let k=0;k<5;k++){g.fill(110+k*10,36,40,255);g.ellipse(w/2,h*.8,w*(.46-k*.07),h*(.1-k*.014));g.fill(200,160,70,k%2?255:0);g.ellipse(w/2,h*.8,w*(.4-k*.07),h*(.085-k*.014))}   // patterned rug
+    g.stroke(120,86,50);g.strokeWeight(7);g.line(w*.3,h*.1,w*.34,h*.7);g.line(w*.34,h*.1,w*.38,h*.7);g.strokeWeight(4);for(let k=0;k<9;k++)g.line(w*(.3+.04*k/8*0+k*.0005),h*(.14+k*.065),w*(.34),h*(.14+k*.065));g.noStroke();   // library ladder
+    g.fill(82,54,34);g.rect(w*.6,h*.62,w*.18,h*.05);g.rect(w*.62,h*.67,w*.02,h*.12);g.rect(w*.74,h*.67,w*.02,h*.12);g.fill(240,235,215);g.quad(w*.64,h*.6,w*.69,h*.62,w*.69,h*.57,w*.64,h*.55);g.quad(w*.69,h*.62,w*.74,h*.6,w*.74,h*.55,w*.69,h*.57);   // reading desk + open book
+    g.fill(30,100,70);g.arc(w*.76,h*.62,w*.04,h*.07,PI,TWO_PI);glow(w*.76,h*.6,h*.3,'255,210,120',.35,g);for(let k=0;k<4;k++){g.fill(random([[140,40,40],[40,90,60],[60,70,140]]));g.rect(w*.63,h*.6-k*h*.015,w*.04,h*.014)}
+    g.fill(100,30,40);g.rect(w*.12,h*.58,w*.1,h*.12,16);g.rect(w*.115,h*.54,w*.02,h*.16,10);g.fill(150,60,70);g.rect(w*.13,h*.57,w*.08,h*.05,10);                                              // armchair
+    g.stroke(60,50,30);g.strokeWeight(3);g.line(w/2,0,w/2,h*.1);g.noFill();g.stroke(200,160,70);g.strokeWeight(5);g.ellipse(w/2,h*.11,w*.12,h*.03);g.noStroke();for(let k=0;k<8;k++){const cx=w/2+cos(k*TWO_PI/8)*w*.06;g.fill(240,230,200);g.rect(cx-2,h*.085,4,10);glow(cx,h*.08,h*.05,'255,200,100',.5,g)}   // chandelier
+    glow(w*.5,h*.45,h*.8,'255,190,100',.3,g)}
+  if(i==1){g.background(22,6,12);g.fill(70,42,26);g.rect(0,h*.66,w,h*.34);g.stroke(46,28,18);for(let k=0;k<14;k++)g.line(0,h*.66+k*h*.025,w,h*.66+k*h*.025);for(let k=0;k<20;k++)g.line(w*k/20,h*.66,w*(k-10)/9+w*.5,h);g.noStroke();   // THEATRE STAGE
+    for(const [x,c] of[[.3,[255,200,140]],[.5,[255,240,190]],[.7,[200,220,255]]]){g.fill(c[0],c[1],c[2],34);g.quad(w*x-w*.02,h*.05,w*x+w*.02,h*.05,w*x+w*.1,h*.7,w*x-w*.1,h*.7);g.fill(40);g.rect(w*x-w*.03,h*.03,w*.06,h*.03);glow(w*x,h*.7,h*.22,c.join(','),.3,g)}  // three spotlights
+    for(const sd of[0,1]){const x=sd?w*.76:0;g.fill(112,20,32);g.rect(x,0,w*.24,h*.7);for(let k=0;k<9;k++){g.fill(80+k%3*14,12,22,230);g.rect(x+k*w*.027,0,w*.013,h*.7)}g.fill(200,160,60);g.rect(sd?w*.76:w*.22,0,w*.012,h*.7);g.fill(200,160,60);g.circle(sd?w*.78:w*.2,h*.5,w*.02);g.rect(sd?w*.783:w*.196,h*.5,w*.006,h*.12)}   // curtains, gold ties, tassels
+    g.fill(130,24,36);g.rect(0,0,w,h*.1);g.fill(200,160,60);g.rect(0,h*.095,w,h*.012);for(let k=0;k<30;k++)g.triangle(w*k/30,h*.107,w*(k+1)/30,h*.107,w*(k+.5)/30,h*.13);   // proscenium valance + gold fringe
+    for(let k=0;k<26;k++)glow(w*(k+.5)/26,h*.665,h*.05,'255,200,120',.35,g);g.fill(60,36,22);g.rect(0,h*.66,w,h*.01);                                     // footlights
+    for(let r=0;r<3;r++)for(let k=0;k<16;k++){const x=w*(k+.5)/16+(r%2)*10,y=h*(.84+r*.07);g.fill(90,12,22);g.rect(x-w*.02,y,w*.04,h*.12,8);g.fill(8,4,6);g.ellipse(x,y-4,w*.02,h*.05)}}   // velvet seats + audience
+  if(i==2){for(let y=0;y<h*.6;y++){const t=y/(h*.6);g.stroke(lerp(110,210,t),lerp(185,235,t),lerp(205,215,t));g.line(0,y,w,y)}g.noStroke();glow(w*.8,h*.15,h*.5,'255,240,170',.6,g);                // ---- WALLED GARDEN
+    g.fill(110,130,150);g.rect(w*.62,h*.28,w*.07,h*.3);g.triangle(w*.61,h*.28,w*.655,h*.14,w*.7,h*.28);g.rect(w*.72,h*.34,w*.05,h*.24);g.triangle(w*.71,h*.34,w*.745,h*.22,w*.78,h*.34);g.rect(w*.5,h*.42,w*.12,h*.16);for(let k=0;k<7;k++){g.fill(255,220,120);g.rect(w*(.51+k*.015),h*.46,3,6)}   // distant castle
+    for(let k=0;k<4;k++){g.fill(70+k*14,150+k*12,80+k*8);g.ellipse(w*(k*.3),h*(.62-k*.03),w*.6,h*.3)}g.fill(60,140,70);g.rect(0,h*.62,w,h*.38);
+    g.fill(150,130,90);g.quad(w*.46,h*.62,w*.54,h*.62,w*.72,h,w*.28,h);for(const x of[.08,.2,.8,.93]){g.fill(80,56,36);g.rect(w*x-8,h*.3,16,h*.34);g.fill(40,120,56);g.ellipse(w*x,h*.3,w*.16,h*.26)}
+    g.fill(130,130,138);g.ellipse(w*.3,h*.72,w*.14,h*.04);g.rect(w*.294,h*.64,w*.012,h*.08);g.fill(150,150,158);g.ellipse(w*.3,h*.63,w*.07,h*.022);g.fill(110,170,210,170);g.ellipse(w*.3,h*.725,w*.12,h*.03);glow(w*.3,h*.66,h*.2,'170,220,255',.25,g);   // stone fountain
+    g.noFill();g.stroke(110,90,70);g.strokeWeight(6);g.line(w*.68,h*.66,w*.68,h*.38);g.line(w*.84,h*.66,w*.84,h*.38);g.arc(w*.76,h*.38,w*.16,h*.14,PI,TWO_PI);g.noStroke();for(let k=0;k<70;k++){const a=random(PI,TWO_PI);g.fill(random([[230,70,100],[250,120,150],[255,255,255]]));g.circle(w*.76+cos(a)*w*.08+random(-6,6),h*.38+sin(a)*h*.07+random(-6,6),random(6,11))}   // rose arch
+    g.fill(60,50,40);g.rect(w*.1,h*.7,w*.1,h*.015);g.rect(w*.11,h*.715,w*.01,h*.04);g.rect(w*.18,h*.715,w*.01,h*.04);
+    for(let k=0;k<200;k++){g.fill(random([[240,120,160],[250,220,80],[255,255,255],[170,120,230]]));g.circle(random(w),random(h*.68,h),random(4,9))}}   // bench + flower beds
+  if(i==3){g.background(190,190,198);for(let y=0;y<h*.7;y+=60)for(let x=0;x<w;x+=120){g.fill(random(180,205));g.rect(x+3,y+3,114,54)}g.fill(150,150,162);g.quad(0,h*.72,w,h*.72,w*1.3,h,-w*.3,h);   // ---- EMPTY ROOM
+    g.stroke(130,130,140);g.strokeWeight(2);for(let k=0;k<12;k++)g.line(w/2+(k-6)*w*.02,h*.72,(k-6)*w*.2+w/2,h);g.noFill();for(let k=0;k<6;k++)g.line(0,h*(.76+k*.04),w,h*(.76+k*.04));g.noStroke();
+    g.fill(255,250,225);g.rect(w*.4,h*.1,w*.12,h*.32);g.fill(255,250,220,70);g.quad(w*.4,h*.42,w*.52,h*.42,w*.76,h*.96,w*.3,h*.96);g.stroke(110,110,120);g.strokeWeight(5);g.noFill();g.rect(w*.4,h*.1,w*.12,h*.32);g.line(w*.46,h*.1,w*.46,h*.42);g.line(w*.4,h*.26,w*.52,h*.26);g.stroke(120,120,130,140);g.strokeWeight(1.5);g.bezier(w*.2,h*.1,w*.22,h*.2,w*.19,h*.3,w*.23,h*.45);g.noStroke();g.fill(120,120,130);g.rect(0,h*.68,w,h*.04)}   // plaster cracks, skirting, window shaft
+  if(i==4){g.background(14,12,26);glow(w/2,h*.46,h*.5,'201,162,75',.25,g);g.noFill();g.stroke(201,162,75,200);g.strokeWeight(5);g.rect(w*.46,h*.3,w*.08,h*.36);g.arc(w*.5,h*.3,w*.08,h*.12,PI,TWO_PI);g.fill(30,24,16);g.noStroke();g.ellipse(w*.5,h*.7,w*.3,h*.04)}
+  return g}
+function extras(r,a){if(a<=.02)return;const{w,h}=Lg();noStroke();
+  if(r==0)for(let i=0;i<9;i++){const x=w*(.24+i*.065)+sin(frameCount*.01+i)*8,y=h*(.1+.25*noise(i*5,frameCount*.003));glow(x,y,34,'255,190,90',.5*a);fill(236,226,200,255*a);rect(x-2,y,4,13);fill(255,210,110,255*a);ellipse(x,y-4,5,9+random(2))}
+  if(r==1){glow(w/2,h*.62,h*.45,'255,230,170',(.12+.05*sin(frameCount*.08))*a)}
+  if(r==2){for(let i=0;i<6;i++){const x=w*(.15+i*.13)+sin(frameCount*.02+i)*60,y=h*(.5+.08*sin(frameCount*.03+i*2)),f=abs(sin(frameCount*.3+i));fill(255,170,210,230*a);ellipse(x-5,y,12*f+2,9);ellipse(x+5,y,12*f+2,9)}
+    for(let k=0;k<10;k++){const t=(frameCount*.04+k*.1)%1;fill(200,235,255,200*a);circle(w*.3+sin(k*6)*w*.012,h*.63+sin(t*PI)*-h*.07+t*h*.1,3)}}   // butterflies + fountain spray
+  if(r==3){glow(w*.56,h*.8,h*.5,'255,250,220',.1*a)}}
+function draw(){const{w,h,ox}=Lg(),t=fx?min((frameCount-f0)/170,1):0,tg=fx?RI[fx]:hs?RI[hs]:4;if(tg!==to){from=to;to=tg;mix=0}mix=min(1,mix+.045);
+  background(0);push();translate(ox,0);image(R[from],0,0);tint(255,mix*255);image(R[to],0,0);noTint();noStroke();
+  for(const d of dust){d.y-=d.v;if(d.y<0)d.y=1;fill(255,240,200,90);circle(d.x*w,d.y*h,d.r)}
+  extras(from,1-mix);extras(to,mix);
+  if(fx==='library'&&frameCount%4==0)pp.push({x:random(w),y:h*.7,vx:random(-.5,.5),vy:-random(.6,1.6),l:160,c:[245,240,220],k:1});
+  if(fx==='stage'&&frameCount%2==0)pp.push({x:random(w),y:-10,vx:random(-1,1),vy:random(2,5),l:200,c:random([[255,215,90],[255,120,120],[255,255,255]]),k:1});
+  if(fx==='garden'&&frameCount%3==0)pp.push({x:random(w),y:random(h*.4,h*.8),vx:random(-.6,.6),vy:random(-.5,.2),l:200,c:[255,245,150],k:0});
+  for(let i=pp.length-1;i>=0;i--){const p=pp[i];p.x+=p.vx+sin(p.y*.03);p.y+=p.vy;p.l--;if(p.l<=0){pp.splice(i,1);continue}if(p.k){fill(p.c[0],p.c[1],p.c[2],min(255,p.l*3));rect(p.x,p.y,9,6)}else{glow(p.x,p.y,14,p.c.join(','),min(1,p.l/100));}}
+  pop();if(fx==='empty')spot(width/2,height*.5,height*.55,.7*t);vignette(.5)}
+
+</script></body></html>

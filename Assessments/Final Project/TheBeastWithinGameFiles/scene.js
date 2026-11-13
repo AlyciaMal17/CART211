@@ -5,3 +5,11 @@ function vignette(a=.6,r=.3){const c=drawingContext,w=width,h=height,g=c.createR
 function spot(x,y,r,a){const c=drawingContext,g=c.createRadialGradient(x,y,r*.2,x,y,r);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,'+a+')');c.fillStyle=g;c.fillRect(0,0,width,height)}
 function fig(x,y,s,col,wave=0){push();translate(x,y);noStroke();fill(col[0],col[1],col[2]);beginShape();vertex(-s*.5,0);vertex(-s*.3,-s*1.1);vertex(s*.3,-s*1.1);vertex(s*.5,0);endShape(CLOSE);
   stroke(col[0],col[1],col[2]);strokeWeight(s*.18);line(s*.3,-s*.95,s*.6,-s*(.9+wave*.8));line(-s*.3,-s*.95,-s*.6,-s*.7);noStroke();fill(230,190,160);circle(0,-s*1.35,s*.55);fill(40,26,18);arc(0,-s*1.4,s*.58,s*.5,PI,TWO_PI);pop()}
+
+// ---- Cinematic layer: film grain, colour grade and light shafts, drawn after every frame on every page. Tune per page with FILM.
+const FILM={warm:[255,190,130,22],rays:false,grain:32};let _gr;
+function rays(){push();noStroke();blendMode(ADD);for(let i=0;i<6;i++){const x=width*(.08+i*.17)+sin(frameCount*.004+i)*30;fill(255,230,170,6+3*sin(frameCount*.01+i));quad(x,0,x+width*.05,0,x+width*.26,height,x+width*.12,height)}blendMode(BLEND);pop()}
+p5.prototype.registerMethod('post',function(){try{if(typeof width==='undefined'||!width)return;
+  if(!_gr){_gr=createGraphics(256,256);_gr.loadPixels();for(let i=0;i<_gr.pixels.length;i+=4){const v=random(255);_gr.pixels[i]=_gr.pixels[i+1]=_gr.pixels[i+2]=v;_gr.pixels[i+3]=255}_gr.updatePixels()}
+  push();blendMode(OVERLAY);tint(255,FILM.grain);const ox=-random(256),oy=-random(256);for(let x=ox;x<width;x+=256)for(let y=oy;y<height;y+=256)image(_gr,x,y);noTint();
+  blendMode(SOFT_LIGHT);noStroke();fill(FILM.warm[0],FILM.warm[1],FILM.warm[2],FILM.warm[3]);rect(0,0,width,height);blendMode(BLEND);if(FILM.rays)rays();pop()}catch(e){}});
