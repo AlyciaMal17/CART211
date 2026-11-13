@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>The Beast Within: Creature Sorting Game</title>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Beast Within: Creature Sorting Game</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script></head><body>
@@ -8,7 +8,7 @@
   <div class="speech" id="say"></div>
   <div class="opts" id="btns"><button class="btn" id="acc">Accept</button><button class="btn" id="rej">Reject</button></div>
 </div>
-<script src="tracker.js"></script>
+<script src="tracker.js"></script><script src="scene.js"></script><script src="creatures.js"></script>
 <script>
 Beast.fresh(); // new run: the timer starts here
 let talking=false,stars=[],candles=[],dust=[],bg;
@@ -63,30 +63,4 @@ function draw(){
   const vg=ctx.createRadialGradient(w/2,h/2,h*.25,w/2,h/2,max(w,h)*.7);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,0.7)');
   ctx.fillStyle=vg;ctx.fillRect(0,0,w,h)}
 
-// ---------- detailed Sorting Hat ----------
-function hat(x,y,s){
-  const ctx=drawingContext;push();translate(x,y);rotate(sin(frameCount*.02)*.02);
-  fill(52,33,22);stroke(25,14,8);strokeWeight(3);beginShape();                                               // wavy brim
-  for(let a=0;a<TWO_PI;a+=.1)vertex(cos(a)*s*.88*(1+sin(a*7)*.025),sin(a)*s*.17*(1+sin(a*5)*.1));endShape(CLOSE);
-  fill(84,56,38);beginShape();for(let a=0;a<TWO_PI;a+=.1)vertex(cos(a)*s*.8*(1+sin(a*7)*.025),sin(a)*s*.13-s*.02);endShape(CLOSE);
-  fill(88,60,40);stroke(25,14,8);strokeWeight(3);                                                            // bent cone
-  beginShape();vertex(-.6*s,0);bezierVertex(-.52*s,-.4*s,-.3*s,-.75*s,-.1*s,-.98*s);bezierVertex(.05*s,-1.15*s,.35*s,-1.15*s,.52*s,-.9*s);
-  bezierVertex(.35*s,-.98*s,.2*s,-.92*s,.15*s,-.78*s);bezierVertex(.3*s,-.5*s,.5*s,-.25*s,.62*s,0);endShape(CLOSE);
-  noFill();stroke(135,95,64,150);strokeWeight(s*.035);bezier(-.48*s,-.1*s,-.4*s,-.45*s,-.25*s,-.7*s,-.08*s,-.92*s);   // light edge
-  stroke(35,21,13,140);bezier(.52*s,-.1*s,.42*s,-.35*s,.3*s,-.5*s,.17*s,-.72*s);                            // shadow edge
-  stroke(40,24,15,150);strokeWeight(2);for(let k=1;k<=5;k++){const yy=-k*.17*s,ww=s*1.1*(1-k*.14);arc(0,yy,ww,s*.07,.1,PI-.1)}  // wrinkles
-  ctx.setLineDash([5,4]);                                                                                    // stitched patches
-  push();translate(-.3*s,-.6*s);rotate(-.25);fill(112,78,50);stroke(190,150,100);strokeWeight(1.5);rect(-s*.07,-s*.06,s*.14,s*.12);pop();
-  push();translate(.27*s,-.48*s);rotate(.3);fill(70,45,30);stroke(190,150,100);strokeWeight(1.5);rect(-s*.06,-s*.08,s*.12,s*.16);pop();
-  stroke(190,150,100,170);noFill();bezier(-.55*s,-.2*s,-.3*s,-.28*s,.2*s,-.22*s,.58*s,-.16*s);ctx.setLineDash([]);   // seam
-  for(const dx of[-1,1]){const ex=dx*s*.16,ey=-.36*s,a=atan2(mouseY-(y+ey),mouseX-(x+ex)),px=ex+cos(a)*s*.03,py=ey+sin(a)*s*.02;   // eyes
-    fill(235,225,200);stroke(40,24,16);strokeWeight(s*.01);ellipse(ex,ey,s*.17,s*.12);
-    noStroke();fill(110,70,30);circle(px,py,s*.07);fill(10);circle(px,py,s*.035);fill(255,210);circle(px-s*.01,py-s*.01,s*.012);
-    noFill();stroke(35,20,12);strokeWeight(s*.016);arc(ex,ey,s*.19,s*.15,PI*1.05,PI*1.95);
-    stroke(60,38,25,160);strokeWeight(2);arc(ex,ey+s*.03,s*.18,s*.08,.2,PI-.2);
-    const up=talking?sin(frameCount*.4)*s*.012-s*.01:0;stroke(35,20,12);strokeWeight(s*.024);line(ex+dx*s*.09,ey-s*.09+up,ex-dx*s*.08,ey-s*.125+up)}
-  stroke(40,24,16);strokeWeight(s*.014);noFill();arc(0,-.22*s,s*.07,s*.06,0,PI);line(0,-.28*s,-.01*s,-.22*s);   // nose
-  if(talking){const m=abs(sin(frameCount*.4))*s*.07;fill(38,8,8);stroke(135,95,64);strokeWeight(s*.012);ellipse(0,-.1*s,s*.3,s*.02+m)}   // mouth
-  else{stroke(35,20,12);strokeWeight(s*.018);noFill();arc(0,-.14*s,s*.3,s*.1,.15,PI-.15)}
-  pop()}
 </script></body></html>
