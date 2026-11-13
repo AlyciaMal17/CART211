@@ -1,0 +1,132 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>The Beast Within | The Forbidden Forest</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script></head><body>
+<div class="trail" data-step="1"></div>
+<div class="stage">
+  <div class="place">The Forbidden Forest</div>
+  <div class="speech"><div class="who" id="who"></div><div id="say"></div><div class="hint" id="hint">click to continue ▸</div></div>
+  <div class="opts" id="opts" style="display:none">
+    <div class="card" data-opt="investigate">Investigate<small>Step closer</small></div>
+    <div class="card" data-opt="run">Run<small>Back to the castle</small></div>
+    <div class="card" data-opt="hide">Hide<small>Stay very still</small></div>
+  </div>
+  <button class="btn" id="cont" style="display:none">Continue</button>
+</div>
+<script src="tracker.js"></script><script src="story.js"></script>
+<script>
+const intro=[
+ ['Narrator','It is a very gloomy day. A cold mist clings to the Forbidden Forest, and the path under your boots is slick with wet leaves.'],
+ ['Narrator','You were sent to find silver moss for Professor Sprout. Nobody mentioned how quiet the woods would be.'],
+ ['Narrator','You walk on. Rain drips from the branches. And then, all at once, the birds stop singing.'],
+ ['Narrator','Something rustles in the bushes beside the path. Two yellow eyes open in the dark, and they are looking straight at you.'],
+ ['The Sorting Hat','Well? I am watching, you know. What will you do?']];
+const outcomes={
+ investigate:[['Narrator','You hold your breath and push the branches aside. A tiny, shiny-nosed creature tumbles out, clutching your lost button.'],['Narrator','A Niffler! It chirps once and scurries off, its pockets clinking with stolen gold.'],['The Sorting Hat','Brave, or just curious? Hmm. I will remember that.']],
+ run:[['Narrator','You do not wait to find out. Your boots slip on the mud and branches claw at your cloak as you sprint back toward the castle lights.'],['Narrator','Behind you, the yellow eyes stay exactly where they were, watching you go.'],['The Sorting Hat','Sensible. Or was that fear? Hmm. I will remember that.']],
+ hide:[['Narrator','You crouch behind a tree and go very still. The mist closes in. Soft footsteps pass inches from your hiding place.'],['Narrator','The yellow eyes drift by, then slowly fade into the trees. A Thestral, perhaps. It knew you were there.'],['The Sorting Hat','Quiet and watchful. Hmm. I will remember that.']]};
+Story.play(intro,()=>{opts.style.display='flex';Beast.begin('forest')});
+Beast.options('.card',{investigate:{niffler:1,phoenix:2},run:{bowtruckle:2},hide:{thestral:2}},o=>{
+  opts.style.display='none';out=o;fo=frameCount;Story.play(outcomes[o],()=>cont.style.display='inline-block')});
+cont.onclick=()=>Beast.go('hut.html');
+
+let L=[],ground,out=null,fo=0,leaves=[],rain=[],mist=[],bush=[];
+const pathX=(t,w)=>w*.5+Math.sin(t*2.4)*w*.07*(1-t*.5);
+function setup(){createCanvas(windowWidth,windowHeight);
+  for(let i=0;i<130;i++)rain.push({x:random(width),y:random(height),v:random(16,24)});
+  for(let i=0;i<20;i++)leaves.push({x:random(width),y:random(height),r:random(TWO_PI),v:random(.6,1.6)});
+  for(let i=0;i<14;i++)bush.push([random(-1,1),random(-1,.6),random(.6,1.2)]);
+  build()}
+function windowResized(){resizeCanvas(windowWidth,windowHeight);build()}
+function build(){randomSeed(11);const w=width,h=height,hz=h*.44;ground=createGraphics(w,h);const g=ground;
+  for(let y=0;y<hz;y++){const t=y/hz;g.stroke(lerp(52,104,t),lerp(62,114,t),lerp(60,108,t));g.line(0,y,w,y)}       // grey sky
+  for(let y=hz;y<h;y++){const t=(y-hz)/(h-hz);g.stroke(lerp(40,16,t),lerp(52,24,t),lerp(36,14,t));g.line(0,y,w,y)} // forest floor
+  for(let y=hz;y<h;y++){const t=(y-hz)/(h-hz),cx=pathX(t,w),hw=lerp(5,w*.27,pow(t,1.25));                         // winding path
+    g.stroke(lerp(70,104,t),lerp(58,82,t),lerp(44,62,t));g.line(cx-hw,y,cx+hw,y);g.stroke(26,36,20,170);g.line(cx-hw*1.14,y,cx-hw,y);g.line(cx+hw,y,cx+hw*1.14,y)}
+  g.noStroke();for(let i=0;i<2;i++){const t=.55+i*.3,cx=pathX(t,w)+(i?40:-60);g.fill(125,135,130,150);g.ellipse(cx,hz+(h-hz)*t,w*.12*(t+.3),h*.025*(t+.3))}   // puddles
+  for(let i=0;i<420;i++){const t=random(.05,1),cx=pathX(t,w),hw=lerp(5,w*.27,pow(t,1.25));g.fill(random(90,150),random(60,80),random(25,40),170);g.ellipse(cx+random(-hw,hw),hz+(h-hz)*t,random(3,9)*t+2,random(2,5)*t+1)}  // leaves
+  for(let i=0;i<260;i++){const x=random(w),y=random(hz,h),t=(y-hz)/(h-hz);if(abs(x-pathX(t,w))<lerp(5,w*.28,t))continue;g.stroke(20,34,18,200);g.line(x,y,x+random(-4,4),y-random(6,18)*(t+.2))}
+  const cfg=[{n:18,tw:[.008,.016],col:[52,64,58]},{n:9,tw:[.02,.04],col:[30,40,34]},{n:6,tw:[.06,.1],col:[14,20,16]}];
+  L=cfg.map((c,l)=>{const q=createGraphics(w*1.2,h);
+    for(let i=0;i<c.n;i++){let x;do{x=random(w*1.2)}while((l==2&&x>w*.36&&x<w*.84)||(l==1&&x>w*.45&&x<w*.75));
+      const b=l==0?hz+random(0,h*.04):l==1?hz+random(h*.04,h*.22):h*1.02;tree(q,x,b,random(c.tw[0],c.tw[1])*w,c.col,l)}return q})}
+function tree(g,x,b,tw,col,l){g.noStroke();g.fill(col[0],col[1],col[2]);g.beginShape();g.vertex(x-tw*.9,b);g.vertex(x-tw*.5,b-tw*.8);g.vertex(x-tw*.4,-10);g.vertex(x+tw*.4,-10);g.vertex(x+tw*.5,b-tw*.8);g.vertex(x+tw*.9,b);g.endShape(CLOSE);
+  g.stroke(0,0,0,70);g.strokeWeight(max(1,tw*.05));for(let k=0;k<5;k++){const o=random(-.4,.4)*tw;g.line(x+o,b-tw,x+o*.8,random(0,b*.5))}
+  g.stroke(col[0],col[1],col[2]);for(let k=0;k<3;k++){const y=random(b*.2,b*.7),d=random()<.5?-1:1,len=random(tw*2,tw*4);g.strokeWeight(tw*.25);g.line(x,y,x+d*len,y-len*.5);g.strokeWeight(tw*.1);g.line(x+d*len,y-len*.5,x+d*len*1.4,y-len*.9)}
+  g.noStroke();if(l<2)for(let k=0;k<5;k++){g.fill(max(0,col[0]-14),max(0,col[1]-8),max(0,col[2]-12),200);g.ellipse(x+random(-tw*4,tw*4),random(0,g.height*.12),tw*5,g.height*.07)}}
+function eyes(x,y,s,off,a=255){if((frameCount+off)%240<9){stroke(255,215,60,a);strokeWeight(2);line(x-s*1.5,y,x-s*.3,y);line(x+s*.3,y,x+s*1.5,y);noStroke();return}
+  noStroke();fill(255,215,60,28*a/255);circle(x,y,s*5);for(const d of[-1,1]){push();translate(x+d*s*.95,y);rotate(d*-.25);fill(255,215,60,a);ellipse(0,0,s*1.5,s*.8);fill(10,a);ellipse(0,0,s*.3,s*.75);pop()}}
+// ================= NIFFLER (faces right) =================
+function niffler(x,y,s){push();translate(x,y);randomSeed(3);noStroke();
+  fill(0,0,0,70);ellipse(0,.42*s,.95*s,.12*s);                                                    // ground shadow
+  fill(20,16,16);ellipse(-.5*s,.12*s,.3*s,.16*s);                                                   // short tail
+  fill(24,20,20);ellipse(-.2*s,.35*s,.26*s,.14*s);ellipse(.2*s,.36*s,.26*s,.14*s);                  // back feet
+  stroke(205,195,175);strokeWeight(s*.01);for(const cx of[-.28,-.2,-.12,.12,.2,.28])line(cx*s,.39*s,cx*s-.02*s,.43*s);noStroke();   // claws
+  fill(26,22,22);ellipse(0,0,.9*s,.78*s);                                                           // round fluffy body
+  stroke(14,11,11);strokeWeight(s*.014);for(let i=0;i<170;i++){const a=random(TWO_PI),r=random(.85,1.08),px=cos(a)*.45*s*r,py=sin(a)*.39*s*r;line(px,py,px+cos(a)*s*.07,py+sin(a)*s*.07)}   // fur
+  noStroke();fill(66,56,50);ellipse(.04*s,.1*s,.5*s,.4*s);fill(18,12,10);ellipse(.04*s,-.02*s,.46*s,.09*s);   // belly pouch + opening
+  for(const c of[[-.1,-.03],[.0,-.05],[.1,-.03],[.18,-.04]]){fill(214,170,50);circle(c[0]*s,c[1]*s,.07*s);fill(255,235,150);circle(c[0]*s-.012*s,c[1]*s-.012*s,.02*s)}   // coins in pouch
+  stroke(24,20,20);strokeWeight(s*.1);noFill();line(.2*s,-.08*s,.4*s,.12*s);line(.4*s,.12*s,.55*s,0);noStroke();                    // arm
+  fill(30,25,25);ellipse(.56*s,-.01*s,.1*s,.09*s);stroke(30,25,25);strokeWeight(s*.016);line(.6*s,-.04*s,.64*s,-.07*s);line(.61*s,-.01*s,.66*s,-.02*s);noStroke();   // hand + fingers
+  fill(220,176,52);circle(.64*s,-.1*s,.13*s);fill(255,238,160);circle(.62*s,-.12*s,.04*s);                                          // stolen coin
+  const tw=.5+.5*sin(frameCount*.2);stroke(255,245,200,200*tw);strokeWeight(2);line(.64*s,-.2*s,.64*s,-.05*s);line(.56*s,-.12*s,.72*s,-.12*s);noStroke();
+  fill(27,23,23);ellipse(.38*s,-.22*s,.54*s,.46*s);stroke(14,11,11);strokeWeight(s*.012);                                          // head + fur
+  for(let i=0;i<90;i++){const a=random(PI*.9,PI*2.2),px=.38*s+cos(a)*.27*s,py=-.22*s+sin(a)*.23*s;line(px,py,px+cos(a)*s*.05,py+sin(a)*s*.05)}noStroke();
+  fill(26,22,22);ellipse(.2*s,-.43*s,.13*s,.15*s);fill(110,70,70);ellipse(.2*s,-.43*s,.06*s,.08*s);                                    // ear
+  fill(54,47,44);beginShape();vertex(.55*s,-.34*s);bezierVertex(.75*s,-.4*s,1.0*s,-.32*s,1.03*s,-.22*s);bezierVertex(1.0*s,-.12*s,.75*s,-.08*s,.55*s,-.12*s);endShape(CLOSE);   // long duck-bill snout
+  stroke(125,115,108,160);strokeWeight(s*.01);noFill();bezier(.6*s,-.33*s,.75*s,-.37*s,.92*s,-.31*s,1.0*s,-.25*s);line(.58*s,-.2*s,1.0*s,-.2*s);noStroke();
+  fill(10);circle(.95*s,-.27*s,.022*s);circle(.98*s,-.23*s,.022*s);                                                                  // nostrils
+  fill(6);circle(.5*s,-.34*s,.085*s);fill(255,235);circle(.52*s,-.36*s,.025*s);                                                      // shiny bead eye
+  stroke(14,11,11);strokeWeight(s*.016);line(.43*s,-.42*s,.55*s,-.4*s);                                                              // brow
+  stroke(210,200,190,150);strokeWeight(1);line(.9*s,-.2*s,1.06*s,-.14*s);line(.9*s,-.18*s,1.06*s,-.1*s);                             // whiskers
+  pop();randomSeed(millis())}
+
+// ================= THESTRAL (faces left, a = opacity 0-255) =================
+function thestral(x,y,s,a){push();translate(x,y);
+  noStroke();fill(200,220,235,18*a/255);ellipse(0,-.15*s,1.7*s,1.4*s);                                   // pale mist glow so the black body shows
+  const rim=[110,125,135],ink=[16,20,24];
+  const leg=(x0,y0,kx,ky,fx,fy)=>{noFill();for(const p of[[rim,.07,.55],[ink,.045,1]]){stroke(p[0][0],p[0][1],p[0][2],a*p[2]);strokeWeight(s*p[1]);line(x0*s,y0*s,kx*s,ky*s);strokeWeight(s*p[1]*.7);line(kx*s,ky*s,fx*s,fy*s)}
+    noStroke();fill(ink[0]+14,ink[1]+14,ink[2]+14,a);ellipse(kx*s,ky*s,.06*s,.07*s);fill(ink[0],ink[1],ink[2],a);ellipse(fx*s,(fy+.02)*s,.07*s,.04*s)};
+  stroke(rim[0],rim[1],rim[2],a*.55);strokeWeight(s*.012);fill(24,28,34,a);                               // bat-like leathery wing
+  beginShape();vertex(.05*s,-.2*s);bezierVertex(.1*s,-.6*s,.25*s,-.9*s,.5*s,-1.0*s);bezierVertex(.52*s,-.8*s,.6*s,-.72*s,.7*s,-.62*s);bezierVertex(.66*s,-.5*s,.76*s,-.42*s,.88*s,-.32*s);bezierVertex(.7*s,-.3*s,.5*s,-.26*s,.3*s,-.17*s);endShape(CLOSE);
+  stroke(75,84,92,a);strokeWeight(s*.014);line(.05*s,-.2*s,.5*s,-1.0*s);line(.05*s,-.2*s,.7*s,-.62*s);line(.05*s,-.2*s,.88*s,-.32*s);
+  leg(.3,.08,.38,.34,.32,.64);leg(.4,.08,.5,.34,.44,.64);                                                   // back legs
+  noFill();for(const p of[[rim,.05,.55],[ink,.03,1]]){stroke(p[0][0],p[0][1],p[0][2],a*p[2]);strokeWeight(s*p[1]);bezier(.55*s,-.15*s,.75*s,-.1*s,.78*s,.15*s,.7*s,.34*s)}   // whip tail
+  stroke(ink[0],ink[1],ink[2],a);strokeWeight(s*.012);for(let k=0;k<5;k++)line(.7*s,.34*s,(.68+k*.015)*s,(.4+k*.01)*s);
+  stroke(rim[0],rim[1],rim[2],a*.6);strokeWeight(s*.012);fill(ink[0],ink[1],ink[2],a);                    // gaunt torso
+  beginShape();vertex(-.4*s,-.2*s);bezierVertex(-.2*s,-.15*s,.1*s,-.14*s,.4*s,-.25*s);bezierVertex(.6*s,-.25*s,.62*s,0,.5*s,.12*s);bezierVertex(.2*s,.04*s,-.1*s,.08*s,-.38*s,.12*s);bezierVertex(-.5*s,.05*s,-.5*s,-.15*s,-.4*s,-.2*s);endShape(CLOSE);
+  noFill();stroke(rim[0],rim[1],rim[2],a*.45);strokeWeight(s*.01);for(let k=0;k<7;k++)bezier((-.3+k*.07)*s,-.14*s,(-.27+k*.07)*s,-.05*s,(-.27+k*.07)*s,.02*s,(-.3+k*.07)*s,.09*s);   // visible ribs
+  fill(ink[0]+10,ink[1]+10,ink[2]+10,a);stroke(rim[0],rim[1],rim[2],a*.6);circle(.4*s,-.17*s,.08*s);for(let k=0;k<9;k++)circle((-.35+k*.1)*s,-.2*s+(k>5?-.04*s:0),.025*s);   // hip bone + spine
+  fill(ink[0],ink[1],ink[2],a);stroke(rim[0],rim[1],rim[2],a*.6);strokeWeight(s*.012);                    // thin neck
+  beginShape();vertex(-.4*s,-.2*s);bezierVertex(-.5*s,-.4*s,-.62*s,-.55*s,-.7*s,-.7*s);vertex(-.8*s,-.62*s);bezierVertex(-.7*s,-.45*s,-.55*s,-.25*s,-.45*s,0);endShape(CLOSE);
+  leg(-.3,.08,-.32,.34,-.3,.64);leg(-.18,.08,-.14,.32,-.2,.64);                                             // front legs
+  fill(ink[0],ink[1],ink[2],a);stroke(rim[0],rim[1],rim[2],a*.7);strokeWeight(s*.012);                    // long reptilian skull
+  beginShape();vertex(-.66*s,-.82*s);bezierVertex(-.72*s,-.9*s,-.84*s,-.86*s,-.9*s,-.74*s);bezierVertex(-1.0*s,-.62*s,-1.08*s,-.52*s,-1.06*s,-.46*s);bezierVertex(-1.02*s,-.4*s,-.92*s,-.44*s,-.84*s,-.5*s);bezierVertex(-.76*s,-.56*s,-.7*s,-.6*s,-.64*s,-.66*s);endShape(CLOSE);
+  triangle(-.66*s,-.82*s,-.6*s,-.98*s,-.72*s,-.84*s);                                                       // ear
+  noFill();stroke(rim[0],rim[1],rim[2],a*.5);bezier(-.7*s,-.74*s,-.8*s,-.66*s,-.9*s,-.58*s,-.98*s,-.52*s);line(-.74*s,-.84*s,-.82*s,-.8*s);   // cheekbone, brow ridge
+  noStroke();fill(225,236,248,a);ellipse(-.78*s,-.74*s,.065*s,.045*s);fill(150,170,190,a*.6);ellipse(-.78*s,-.74*s,.03*s,.03*s);   // blank milky eye
+  fill(0,a);ellipse(-1.04*s,-.47*s,.02*s,.035*s);pop()}
+function draw(){
+  const w=width,h=height,t=out?min((frameCount-fo)/170,1):0,px=mouseX/w-.5;
+  push();if(out==='run')translate(random(-7,7),random(-5,5));
+  if(out==='investigate'){translate(w/2,h/2);scale(1+.3*t);translate(-w/2,-h/2)}
+  image(ground,0,0);image(L[0],-w*.1-px*10,0);image(L[1],-w*.1-px*26,0);
+  noStroke();for(let i=0;i<7;i++){fill(150,170,165,16);ellipse((noise(i,frameCount*.002)*1.5-.25)*w,h*(.45+i*.07),w*.55,100)}   // mist
+  const bx=w*.3,by=h*.63,sway=sin(frameCount*.05)*(out?6:2.5);
+  for(const b of bush){fill(14,26,16);ellipse(bx+b[0]*w*.09+sway,by+b[1]*h*.06,w*.07*b[2],h*.09*b[2])}
+  const ey=[[.3,.6,.016,0],[.12,.38,.012,60],[.82,.5,.012,120],[.66,.43,.008,30],[.47,.4,.006,90],[.9,.3,.01,150]];
+  ey.forEach((e,i)=>{let x=w*e[0],y=h*e[1],s=h*e[2],a=255;
+    if(i==0){if(out==='hide'){s*=1+1.6*min(t*1.5,1);if(t>.6){x-=(t-.6)*w*.4;a=255*(1-(t-.6)*2.5)}}
+      if(out==='run')s*=1-.6*t;if(out==='investigate'&&t>.3)return;x+=sway}eyes(x,y,s,e[3],a)});
+  for(let k=0;k<4;k++){fill(18,34,20,235);ellipse(bx+(k-1.5)*w*.025+sway*1.4,by-h*.02+(k%2)*h*.012,w*.04,h*.06)}               // leaves in front
+  image(L[2],-w*.1-px*55,0);
+  if(out==='investigate'&&t>.3){const k=min((t-.3)*2.5,1),nx=w*.3,ny=h*.5-(t>.8?abs(sin(frameCount*.15))*h*.012:0);   // Niffler steps out, drawn above the dialogue box
+    fill(255,230,150,45*k);ellipse(nx,h*.5,h*.34,h*.22);niffler(nx,ny,h*.24*k)}
+  if(out==='hide'&&t>.45){const a=min((t-.45)*3,1)*255;thestral(w*.72,h*.3,h*.26,a)}
+  for(const l of leaves){l.y+=l.v;l.x+=sin(frameCount*.03+l.r)*.8;l.r+=.03;if(l.y>h){l.y=-10;l.x=random(w)}fill(120,75,30,200);push();translate(l.x,l.y);rotate(l.r);ellipse(0,0,10,5);pop()}
+  pop();
+  stroke(170,185,190,70);strokeWeight(1);for(const r of rain){r.y+=r.v;r.x-=2;if(r.y>h){r.y=-20;r.x=random(w+40)}line(r.x,r.y,r.x-2,r.y+14)}
+  if(out==='run'){stroke(255,255,255,40*(1-t));for(let i=0;i<14;i++){const y=random(h);line(0,y,w,y)}}
+  noStroke();if(out==='hide'){fill(0,min(t*2,1)*95);rect(0,0,w,h)}
+  const c=drawingContext,vg=c.createRadialGradient(w/2,h*.5,h*.2,w/2,h*.5,max(w,h)*.7);vg.addColorStop(0,'rgba(0,0,0,0.15)');vg.addColorStop(1,'rgba(0,0,0,0.8)');c.fillStyle=vg;c.fillRect(0,0,w,h)}
+</script></body></html>

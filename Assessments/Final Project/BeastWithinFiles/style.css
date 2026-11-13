@@ -16,3 +16,6 @@ body{transition:opacity .8s}body.out{opacity:0}
 .trail{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:2;letter-spacing:.4em;color:#C9A24B;font-size:14px}
 .memory{position:fixed;bottom:8px;left:0;right:0;text-align:center;z-index:2;font:11px sans-serif;color:#9a9ab5}
 .debug{position:fixed;top:40px;right:10px;z-index:5;background:#000d;color:#9f9;font:11px monospace;padding:8px;max-width:340px;max-height:75vh;overflow:auto;white-space:pre;display:none}
+.speech{cursor:pointer;text-align:left;width:640px}
+.who{font-family:'Cinzel',serif;font-size:13px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px}
+.hint{font:11px sans-serif;color:#9a9ab5;margin-top:6px;text-align:right;visibility:hidden}

@@ -13,7 +13,7 @@ function options(sel,pts,next){
       if(since[o])hov[o]=(hov[o]||0)+performance.now()-since[o];
       d.q[qid]={hesitationSec:+((performance.now()-t0)/1000).toFixed(2),firstHovered:first,chosen:o,
         hoverSec:Object.fromEntries(Object.entries(hov).map(([k,v])=>[k,+(v/1000).toFixed(2)]))};
-      Object.entries(pts[o]).forEach(([c,n])=>d.scores[c]+=n);d.clicks++;save();go(next)});
+      Object.entries(pts[o]).forEach(([c,n])=>d.scores[c]+=n);d.clicks++;save();typeof next==="string"?go(next):next(o)});
   });
 }
 // auto UI: progress candles, "hat memory" strip, debug panel
